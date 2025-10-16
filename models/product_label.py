@@ -37,34 +37,33 @@ class ProductLabelWizard(models.TransientModel):
 
     def action_print_labels(self):
         self.ensure_one()
-
         if not self.product_ids:
-            raise UserError(_("Please select at least one product."))
+            raise UserError(_("You need to select at least one product to print labels."))
 
-        # Prepare label data
-        labels = []
+        # Prepare data for the report
+        label_data = []
         for product in self.product_ids:
-            if self.label_quantity == "on_hand":
-                quantity = product.qty_available
-            else:
-                quantity = self.custom_quantity
-
+            quantity = product.qty_available if self.label_quantity == 'on_hand' else self.custom_quantity
             quantity = max(int(quantity), 1)
+            
+            attribute_string = " ".join(
+                product.product_template_attribute_value_ids.mapped("name")
+            )
 
             for i in range(quantity):
-                labels.append(
-                    {
-                        "product_id": product.id,
-                        "product_name": product.name,
-                        "default_code": product.default_code or "",
-                        "barcode": product.barcode or "",
-                        "sequence": i + 1,
-                        "total_quantity": quantity,
-                        "on_hand_qty": product.qty_available,
-                    }
-                )
+                label_data.append({
+                    'product_name': product.name,
+                    'attribute_string': attribute_string,
+                    'default_code': product.default_code or '',
+                    'barcode': product.barcode or '',
+                    'sequence': i + 1,
+                    'total_quantity': quantity,
+                    'on_hand_qty': product.qty_available,
+                })
 
-        # Pass data to report
-        return self.env.ref(
-            "bi_dynamic_product_label_print.action_report_product_labels"
-        ).report_action(self, data={"labels": labels})
+        data = {'labels': label_data}
+        
+        # Get the report action and generate the PDF
+        report_action = self.env.ref('bi_dynamic_product_label_print.action_report_product_labels').report_action(None, data=data)
+        report_action.update({'close_on_report_download': True})
+        return report_action
