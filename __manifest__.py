@@ -11,9 +11,9 @@
     "depends": ["stock", "product"],
     "data": [
         "security/ir.model.access.csv",
+        "views/paper_formats.xml",
         "views/product_template_views.xml",
         "views/product_label_views.xml",
-        "views/paper_formats.xml",
         "views/reports.xml",
     ],
     "installable": True,
