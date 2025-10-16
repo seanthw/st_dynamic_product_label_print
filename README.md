@@ -27,7 +27,7 @@ The generated labels are formatted in a clean, two-column layout and include ess
 
 ## Installation
 
-1.  Copy the `bi_dynamic_product_label_print` directory into the `addons` path of your Odoo instance.
+1.  Copy the `st_dynamic_product_label_print` directory into the `addons` path of your Odoo instance.
 2.  Navigate to the **Apps** menu in Odoo.
 3.  Click on **Update Apps List**.
 4.  Search for "Dynamic Product Label Print" and click the **Install** button.

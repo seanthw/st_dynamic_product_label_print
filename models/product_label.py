@@ -64,6 +64,6 @@ class ProductLabelWizard(models.TransientModel):
         data = {'labels': label_data}
         
         # Get the report action and generate the PDF
-        report_action = self.env.ref('bi_dynamic_product_label_print.action_report_product_labels').report_action(None, data=data)
+        report_action = self.env.ref('st_dynamic_product_label_print.action_report_product_labels').report_action(None, data=data)
         report_action.update({'close_on_report_download': True})
         return report_action
