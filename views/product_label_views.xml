@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="view_product_label_wizard_form" model="ir.ui.view">
+        <field name="name">product.label.wizard.form</field>
+        <field name="model">product.label.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print Product Labels">
+                <sheet>
+                    <group>
+                        <group string="Product Selection">
+                            <field name="product_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Print Settings">
+                            <field name="label_quantity"/>
+                            <field name="custom_quantity" required="[('label_quantity', '=', 'custom')]" invisible="[('label_quantity', '!=', 'custom')]"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Preview" invisible="[('product_ids', '=', [])]">
+                        <div class="alert alert-info">
+                            <strong>Label Summary:</strong>
+                            <div>
+                                <field name="label_summary" widget="text" nolabel="1"/>
+                            </div>
+                        </div>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_print_labels" string="Print Labels" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Wizard -->
+    <record id="action_product_label_wizard" model="ir.actions.act_window">
+        <field name="name">Print Product Labels</field>
+        <field name="res_model">product.label.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

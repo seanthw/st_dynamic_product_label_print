@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Template -->
+    <template id="report_product_labels">
+        <t t-call="web.html_container">
+            <div class="page">
+                <t t-foreach="labels" t-as="label">
+                    <div class="label" style="width: 50mm; height: 30mm; border: 1px solid #000; padding: 2mm; margin: 2mm; display: inline-block; vertical-align: top; page-break-inside: avoid;">
+                        <div style="text-align: center;">
+                            <h4 style="margin: 1mm 0; font-size: 10pt;">
+                                <span t-esc="label['product_name']"/>
+                            </h4>
+                            
+                            <div style="margin: 1mm 0; font-size: 8pt;">
+                                Code: <span t-esc="label['default_code']"/>
+                            </div>
+                            
+                            <t t-if="label['barcode']">
+                                <div style="margin: 2mm 0;">
+                                    <img t-att-src="'/report/barcode/?type=Code128&amp;value=' + label['barcode'] + '&amp;width=200&amp;height=50'" 
+                                         style="max-width: 100%; height: auto;"/>
+                                </div>
+                            </t>
+                            
+                            <div style="margin: 1mm 0; font-size: 7pt; color: #666;">
+                                Label <span t-esc="label['sequence']"/> of <span t-esc="label['total_quantity']"/>
+                                <br/>
+                                Stock: <span t-esc="label['on_hand_qty']"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Page break every 4 labels -->
+                    <t t-if="(label_index + 1) % 4 == 0">
+                        <div style="page-break-after: always;"></div>
+                    </t>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- Report Action -->
+    <report
+        id="action_report_product_labels"
+        name="bi_dynamic_product_label_print.report_product_labels"
+        model="product.label.wizard"
+        report_type="qweb-pdf"
+        string="Product Labels"
+        paperformat="paperformat_label"
+    />
+
+    <!-- Custom Paper Format -->
+    <record id="paperformat_label" model="report.paperformat">
+        <field name="name">Label Paper Format</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+</odoo>
