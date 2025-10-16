@@ -40,14 +40,16 @@
     </template>
 
     <!-- Report Action -->
-    <report
-        id="action_report_product_labels"
-        name="bi_dynamic_product_label_print.report_product_labels"
-        model="product.label.wizard"
-        report_type="qweb-pdf"
-        string="Product Labels"
-        paperformat="paperformat_label"
-    />
+    <record id="action_report_product_labels" model="ir.actions.report">
+        <field name="name">Product Labels</field>
+        <field name="model">product.label.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bi_dynamic_product_label_print.report_product_labels</field>
+        <field name="report_file">bi_dynamic_product_label_print.report_product_labels</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="bi_dynamic_product_label_print.paperformat_label"/>
+    </record>
 
     <!-- Custom Paper Format -->
     <record id="paperformat_label" model="report.paperformat">
