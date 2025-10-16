@@ -67,18 +67,5 @@
         <field name="paperformat_id" ref="st_dynamic_product_label_print.paperformat_label"/>
     </record>
 
-    <!-- Custom Paper Format -->
-    <record id="paperformat_label" model="report.paperformat">
-        <field name="name">Label Paper Format</field>
-        <field name="default" eval="True"/>
-        <field name="format">A4</field>
-        <field name="orientation">Portrait</field>
-        <field name="margin_top">10</field>
-        <field name="margin_bottom">10</field>
-        <field name="margin_left">10</field>
-        <field name="margin_right">10</field>
-        <field name="header_line" eval="False"/>
-        <field name="header_spacing">0</field>
-        <field name="dpi">90</field>
-    </record>
+
 </odoo>
