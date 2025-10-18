@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.0.0...v1.1.0) (2025-10-18)
+
+
+### Features
+
+* add configurable label printing and paper format selection ([eaf5a98](https://github.com/seanthw/st_dynamic_product_label_print/commit/eaf5a9831835162d520a2c2db8cc97cf286cec04))
+
 # 1.0.0 (2025-10-18)
 
 
