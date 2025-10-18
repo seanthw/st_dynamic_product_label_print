@@ -7,7 +7,6 @@ class ResConfigSettings(models.TransientModel):
 
     label_rows = fields.Integer(string='Number of Rows')
     label_cols = fields.Integer(string='Number of Columns')
-    label_paperformat_id = fields.Many2one('report.paperformat', string='Paper Format')
     label_show_barcode_digits = fields.Boolean(string='Show Barcode Digits')
     label_show_internal_ref = fields.Boolean(string='Show Internal Reference')
     label_show_on_hand_qty = fields.Boolean(string='Show On-Hand Quantity')
@@ -23,7 +22,6 @@ class ResConfigSettings(models.TransientModel):
         ICP = self.env['ir.config_parameter'].sudo()
         ICP.set_param('st_dynamic_product_label_print.label_rows', self.label_rows)
         ICP.set_param('st_dynamic_product_label_print.label_cols', self.label_cols)
-        ICP.set_param('st_dynamic_product_label_print.label_paperformat_id', self.label_paperformat_id.id or 0)
         ICP.set_param('st_dynamic_product_label_print.label_show_barcode_digits', self.label_show_barcode_digits)
         ICP.set_param('st_dynamic_product_label_print.label_show_internal_ref', self.label_show_internal_ref)
         ICP.set_param('st_dynamic_product_label_print.label_show_on_hand_qty', self.label_show_on_hand_qty)
@@ -41,7 +39,6 @@ class ResConfigSettings(models.TransientModel):
         res.update(
             label_rows=int(ICP.get_param('st_dynamic_product_label_print.label_rows', 7)),
             label_cols=int(ICP.get_param('st_dynamic_product_label_print.label_cols', 2)),
-            label_paperformat_id=int(ICP.get_param('st_dynamic_product_label_print.label_paperformat_id', 0)) or False,
             label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
             label_show_internal_ref=ICP.get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',

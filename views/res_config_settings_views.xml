@@ -25,10 +25,7 @@
                                         <label for="label_cols" class="col-lg-3 o_light_label"/>
                                         <field name="label_cols"/>
                                     </div>
-                                    <div class="row">
-                                        <label for="label_paperformat_id" class="col-lg-3 o_light_label"/>
-                                        <field name="label_paperformat_id" domain="[('report_ids.report_name', '=', 'st_dynamic_product_label_print.report_product_labels')]"/>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>

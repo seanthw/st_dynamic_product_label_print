@@ -17,6 +17,11 @@ class ProductLabelWizard(models.TransientModel):
         required=True,
     )
     custom_quantity = fields.Integer(string="Custom Quantity", default=1)
+    paperformat_id = fields.Many2one(
+        'report.paperformat',
+        string='Paper Format',
+        required=True,
+    )
 
     @api.depends("product_ids", "label_quantity", "custom_quantity")
     def _compute_label_summary(self):
@@ -43,9 +48,8 @@ class ProductLabelWizard(models.TransientModel):
         # Fetch configuration parameters
         get_param = self.env['ir.config_parameter'].sudo().get_param
         
-        label_rows = int(get_param('st_dynamic_product_label_print.label_rows', default=7))
-        label_cols = int(get_param('st_dynamic_product_label_print.label_cols', default=2))
-        paperformat_id = int(get_param('st_dynamic_product_label_print.label_paperformat_id', default=0))
+        label_rows = int(get_param('st_dynamic_product_label_print.label_rows', 7))
+        label_cols = int(get_param('st_dynamic_product_label_print.label_cols', 2))
         
         # Prepare data for the report
         label_data = []
@@ -85,8 +89,8 @@ class ProductLabelWizard(models.TransientModel):
         
         # Get the report action and generate the PDF
         report = self.env.ref('st_dynamic_product_label_print.action_report_product_labels')
-        if paperformat_id:
-            report.paperformat_id = paperformat_id
+        if self.paperformat_id:
+            report.paperformat_id = self.paperformat_id.id
 
         report_action = report.report_action(None, data=data)
         report_action.update({'close_on_report_download': True})

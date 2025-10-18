@@ -14,6 +14,7 @@
                         <group string="Print Settings">
                             <field name="label_quantity"/>
                             <field name="custom_quantity" required="[('label_quantity', '=', 'custom')]" invisible="[('label_quantity', '!=', 'custom')]"/>
+                            <field name="paperformat_id"/>
                         </group>
                     </group>
                     
