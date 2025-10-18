@@ -8,13 +8,14 @@
         Each product gets different number of labels matching its on-hand quantity.
     """,
     "author": "Sean Thawe",
-    "depends": ["stock", "product"],
+    "depends": ["stock", "product", "base_setup"],
     "data": [
         "security/ir.model.access.csv",
         "views/paper_formats.xml",
         "views/product_template_views.xml",
         "views/product_label_views.xml",
         "views/reports.xml",
+        "views/res_config_settings_views.xml",
     ],
     "installable": True,
     "application": True,
