@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.0...v1.1.1) (2025-10-18)
+
+
+### Bug Fixes
+
+* **ci:** persist credentials for semantic-release ([d0d15dd](https://github.com/seanthw/st_dynamic_product_label_print/commit/d0d15dd6b01a2a2b19a4d6ee95d09c7e15618d3b))
+
 # [1.1.0](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.0.0...v1.1.0) (2025-10-18)
 
 
