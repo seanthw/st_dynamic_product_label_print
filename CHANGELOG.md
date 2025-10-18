@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.3...v1.1.4) (2025-10-18)
+
+
+### Bug Fixes
+
+* **ci:** remove incorrect pkgRoot from release config ([bf13f05](https://github.com/seanthw/st_dynamic_product_label_print/commit/bf13f0596c399d2de8fa1c5fad33d53cfb3036ec))
+
 ## [1.1.3](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.2...v1.1.3) (2025-10-18)
 
 
