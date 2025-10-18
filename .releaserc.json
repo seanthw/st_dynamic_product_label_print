@@ -7,18 +7,16 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "python3 scripts/update_manifest_version.py ${nextRelease.version}"
+        "prepareCmd": "python3 scripts/update_manifest_version.py ${nextRelease.version} && git add __manifest__.py"
       }
     ],
     [
       "@semantic-release/git",
-      {
-        "assets": [
-          "CHANGELOG.md",
-          "__manifest__.py"
-        ],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }
+            {
+              "assets": ["CHANGELOG.md", "__manifest__.py"],
+              "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
+              "pkgRoot": "dist"
+            }
     ]
   ]
 }
