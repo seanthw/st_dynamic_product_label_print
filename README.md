@@ -25,6 +25,30 @@ The generated labels are formatted in a clean, two-column layout and include ess
     - Label sequence number (e.g., Label 1 of 10)
 - **Clean PDF Output:** Generates a professional, easy-to-read PDF document with labels arranged in a two-column grid.
 
+## Configuration
+
+This module can be configured to match your specific label sheets and information requirements.
+
+1.  Navigate to the main **Settings** menu in Odoo.
+2.  On the **General Settings** page, find the **Product Label Printing** section.
+
+You can customize the following options:
+
+### Layout
+-   **Number of Rows:** Define how many rows of labels are on a single page.
+-   **Number of Columns:** Define how many columns of labels are on a single page.
+-   **Paper Format:** Select the paper format to use for printing.
+
+### Content
+-   **Show Internal Reference:** Check this to display the product's internal reference on the label.
+-   **Show On-Hand Quantity:** Check this to display the current stock level.
+-   **Show Attributes:** Check this to display the product's variant attributes (e.g., Color, Size).
+-   **Show Barcode Digits:** Check this to display the numerical digits below the barcode image.
+
+### Styling
+-   **Base Font Size (px):** Set the base font size for the label text.
+-   **Top/Bottom/Left/Right Margin (mm):** Adjust the margins of the page to ensure perfect alignment with your label sheets.
+
 ## Installation
 
 1.  Copy the `st_dynamic_product_label_print` directory into the `addons` path of your Odoo instance.
