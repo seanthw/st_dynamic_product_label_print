@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.2...v1.1.3) (2025-10-18)
+
+
+### Bug Fixes
+
+* **ci:** restore correct pkgRoot for semantic-release ([9ace5a0](https://github.com/seanthw/st_dynamic_product_label_print/commit/9ace5a04fbdb78d0b407f747a72ac51ea2fce548))
+
 ## [1.1.2](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.1...v1.1.2) (2025-10-18)
 
 
