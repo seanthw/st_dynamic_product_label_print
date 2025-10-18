@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.1...v1.1.2) (2025-10-18)
+
+
+### Bug Fixes
+
+* **ci:** correctly configure git plugin to commit manifest ([fdfbe01](https://github.com/seanthw/st_dynamic_product_label_print/commit/fdfbe0197557f4747ef0bbd70689c8d34414d644))
+
 ## [1.1.1](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.0...v1.1.1) (2025-10-18)
 
 
