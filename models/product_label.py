@@ -21,6 +21,7 @@ class ProductLabelWizard(models.TransientModel):
         'report.paperformat',
         string='Paper Format',
         required=True,
+        default=lambda self: self.env.ref('stock.paperformat_label_sheet_a4', raise_if_not_found=False),
     )
 
     @api.depends("product_ids", "label_quantity", "custom_quantity")
