@@ -1,0 +1,107 @@
+name: Odoo CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout your module
+        uses: actions/checkout@v4
+        with:
+          path: current_module
+
+      - name: Prepare addons directory
+        run: |
+          # Odoo requires module names to be valid Python identifiers (e.g., using underscores).
+          # We'll create an 'addons' directory and move your module into it, renaming it.
+          mkdir addons
+          mv current_module addons/st_dynamic_product_label_print
+
+      - name: Create docker-compose.yml
+        run: |
+          cat <<'EOF' > docker-compose.yml
+          services:
+            db:
+              image: postgres:16
+              environment:
+                - POSTGRES_DB=postgres
+                - POSTGRES_USER=odoo
+                - POSTGRES_PASSWORD=odoo
+              networks:
+                - odoo-network
+            odoo:
+              image: odoo:18.0
+              depends_on:
+                - db
+              environment:
+                - HOST=db
+                - USER=odoo
+                - PASSWORD=odoo
+              volumes:
+                - ./addons:/mnt/extra-addons
+              networks:
+                - odoo-network
+          networks:
+            odoo-network:
+          EOF
+
+      - name: Start Odoo and PostgreSQL
+        run: docker compose up -d
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for Odoo to initialize..."
+          # Give Odoo time to start, especially on the first run when the database is created.
+          sleep 60
+          docker compose ps
+
+      - name: Run module tests
+        run: |
+          docker compose exec -T odoo odoo \
+            --http-port=0 \
+            --db_host=db \
+            --db_user=odoo \
+            --db_password=odoo \
+            --database=postgres \
+            --init=st_dynamic_product_label_print \
+            --test-tags=st_dynamic_product_label_print \
+            --stop-after-init \
+            --log-level=test
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose logs odoo
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    # Only run on pushes to the main branches, not on pull requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write # to push tags and releases
+      issues: write # to comment on issues
+      pull-requests: write # to comment on pull requests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Need full history for semantic-release
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
