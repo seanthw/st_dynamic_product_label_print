@@ -2,7 +2,8 @@ import sys
 import os
 
 def update_manifest_version(version):
-    manifest_path = '__manifest__.py'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    manifest_path = os.path.join(script_dir, '..', '__manifest__.py')
     if not os.path.exists(manifest_path):
         print(f"Error: {manifest_path} not found.")
         sys.exit(1)
@@ -11,7 +12,7 @@ def update_manifest_version(version):
     version_updated = False
     with open(manifest_path, 'r', encoding='utf-8') as f:
         for line in f:
-            if "'version'" in line:
+            if "'version'" in line or '"version"' in line:
                 # This assumes the version is on its own line.
                 # The indentation and comma are hardcoded to match the existing style.
                 new_lines.append(f"    'version': '{version}',\n")
