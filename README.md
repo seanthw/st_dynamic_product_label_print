@@ -37,7 +37,8 @@ You can customize the following options:
 ### Layout
 -   **Number of Rows:** Define how many rows of labels are on a single page.
 -   **Number of Columns:** Define how many columns of labels are on a single page.
--   **Paper Format:** Select the paper format to use for printing.
+
+> **Note:** This module uses a standard A4 paper format for the label sheet. To ensure your labels align correctly, you can adjust the page margins in the **Styling** section below.
 
 ### Content
 -   **Show Internal Reference:** Check this to display the product's internal reference on the label.
