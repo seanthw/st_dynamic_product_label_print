@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.4...v1.1.5) (2025-10-19)
+
+
+### Bug Fixes
+
+* **ci:** use correct release script and configuration ([688f819](https://github.com/seanthw/st_dynamic_product_label_print/commit/688f81975e4c5744ac4256db6ba8b93b4ce3e9b6))
+
 ## [1.1.4](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.3...v1.1.4) (2025-10-18)
 
 
