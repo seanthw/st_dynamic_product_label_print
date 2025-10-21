@@ -24,9 +24,9 @@
                                                                                 <div style="padding-top: 5px; padding-bottom: 5px;">
                                                                                     <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'img_style': 'width:100%;height:40px;'}"/>
                                                                                 </div>
-                                                                                <div t-if="show_barcode_digits" style="font-size: 0.8em;"><t t-esc="label['barcode']"/></div>
+                                                                                <div t-if="show_barcode_digits" style="font-size: 0.9em;"><t t-esc="label['barcode']"/></div>
                                                                             </t>
-                                                                            <div style="font-size: 0.7em; color: #666;">
+                                                                            <div style="font-size: 0.8em; color: #666;">
                                                                                 Label <t t-esc="label['sequence']"/> of <t t-esc="label['total_quantity']"/>
                                                                                 <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
                                                                             </div>
