@@ -45,10 +45,33 @@ class ProductLabelWizard(models.TransientModel):
         # Fetch configuration parameters
         get_param = self.env['ir.config_parameter'].sudo().get_param
         
-        label_rows = self.rows
-        label_cols = self.cols
+        # Get base paperformat
         paperformat_id_param = get_param('st_dynamic_product_label_print.paperformat_id')
-        paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
+        base_paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
+        
+        if not base_paperformat_id:
+            # Fallback to a default if not configured
+            paperformat_ref = self.env.ref('stock.paperformat_label_sheet_a4', raise_if_not_found=False)
+            if not paperformat_ref:
+                raise UserError(_("No default paper format found. Please ensure the 'stock' module is installed or configure a base paper format in the settings."))
+            base_paperformat_id = paperformat_ref.id
+
+        # Get dynamic margin values from settings
+        margin_top = int(get_param('st_dynamic_product_label_print.label_margin_top', 5))
+        margin_bottom = int(get_param('st_dynamic_product_label_print.label_margin_bottom', 5))
+        margin_left = int(get_param('st_dynamic_product_label_print.label_margin_left', 5))
+        margin_right = int(get_param('st_dynamic_product_label_print.label_margin_right', 5))
+
+        # Create a temporary paper format with the dynamic margins.
+        # This is the best practice to handle dynamic report layouts in Odoo.
+        base_paperformat = self.env['report.paperformat'].browse(base_paperformat_id)
+        temp_paperformat = base_paperformat.copy({
+            'name': f'Dynamic Label Paperformat - {self.id}',
+            'margin_top': margin_top,
+            'margin_bottom': margin_bottom,
+            'margin_left': margin_left,
+            'margin_right': margin_right,
+        })
         
         # Prepare data for the report
         label_data = []
@@ -73,24 +96,20 @@ class ProductLabelWizard(models.TransientModel):
 
         data = {
             'labels': label_data,
-            'rows': label_rows,
-            'cols': label_cols,
+            'rows': self.rows,
+            'cols': self.cols,
             'show_barcode_digits': get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
             'show_internal_ref': get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             'show_on_hand_qty': get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             'show_attributes': get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
             'font_size': int(get_param('st_dynamic_product_label_print.label_font_size', 12)),
-            'margin_top': int(get_param('st_dynamic_product_label_print.label_margin_top', 5)),
-            'margin_bottom': int(get_param('st_dynamic_product_label_print.label_margin_bottom', 5)),
-            'margin_left': int(get_param('st_dynamic_product_label_print.label_margin_left', 5)),
-            'margin_right': int(get_param('st_dynamic_product_label_print.label_margin_right', 5)),
         }
         
-        # Get the report action and generate the PDF
+        # Get the report action and generate the PDF using the temporary paperformat
         report = self.env.ref('st_dynamic_product_label_print.action_report_product_labels')
-        if paperformat_id:
-            report.paperformat_id = paperformat_id
+        report.paperformat_id = temp_paperformat.id
 
         report_action = report.report_action(None, data=data)
         report_action.update({'close_on_report_download': True})
+        
         return report_action
