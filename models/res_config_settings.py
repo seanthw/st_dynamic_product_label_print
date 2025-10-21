@@ -50,7 +50,7 @@ class ResConfigSettings(models.TransientModel):
         res.update(
             label_rows=int(ICP.get_param('st_dynamic_product_label_print.label_rows', 7)),
             label_cols=int(ICP.get_param('st_dynamic_product_label_print.label_cols', 2)),
-            label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
+            label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits', 'True') == 'True',
             label_show_internal_ref=ICP.get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             label_show_attributes=ICP.get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
