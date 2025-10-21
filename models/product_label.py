@@ -94,8 +94,12 @@ class ProductLabelWizard(models.TransientModel):
                     'on_hand_qty': product.qty_available,
                 })
 
+        # Chunk labels into pages
+        labels_per_page = self.rows * self.cols
+        pages = [label_data[i:i + labels_per_page] for i in range(0, len(label_data), labels_per_page)]
+
         data = {
-            'labels': label_data,
+            'pages': pages,
             'rows': self.rows,
             'cols': self.cols,
             'show_barcode_digits': get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
