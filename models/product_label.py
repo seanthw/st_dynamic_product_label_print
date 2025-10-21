@@ -17,12 +17,8 @@ class ProductLabelWizard(models.TransientModel):
         required=True,
     )
     custom_quantity = fields.Integer(string="Custom Quantity", default=1)
-    paperformat_id = fields.Many2one(
-        'report.paperformat',
-        string='Paper Format',
-        required=True,
-        default=lambda self: self.env.ref('stock.paperformat_label_sheet_a4', raise_if_not_found=False),
-    )
+    rows = fields.Integer(string="Rows", default=lambda self: int(self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.label_rows', 7)))
+    cols = fields.Integer(string="Columns", default=lambda self: int(self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.label_cols', 2)))
 
     @api.depends("product_ids", "label_quantity", "custom_quantity")
     def _compute_label_summary(self):
@@ -49,8 +45,10 @@ class ProductLabelWizard(models.TransientModel):
         # Fetch configuration parameters
         get_param = self.env['ir.config_parameter'].sudo().get_param
         
-        label_rows = int(get_param('st_dynamic_product_label_print.label_rows', 7))
-        label_cols = int(get_param('st_dynamic_product_label_print.label_cols', 2))
+        label_rows = self.rows
+        label_cols = self.cols
+        paperformat_id_param = get_param('st_dynamic_product_label_print.paperformat_id')
+        paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
         
         # Prepare data for the report
         label_data = []
@@ -90,8 +88,8 @@ class ProductLabelWizard(models.TransientModel):
         
         # Get the report action and generate the PDF
         report = self.env.ref('st_dynamic_product_label_print.action_report_product_labels')
-        if self.paperformat_id:
-            report.paperformat_id = self.paperformat_id.id
+        if paperformat_id:
+            report.paperformat_id = paperformat_id
 
         report_action = report.report_action(None, data=data)
         report_action.update({'close_on_report_download': True})

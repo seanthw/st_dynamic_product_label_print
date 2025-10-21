@@ -16,6 +16,7 @@ class ResConfigSettings(models.TransientModel):
     label_margin_bottom = fields.Integer(string='Bottom Margin (mm)')
     label_margin_left = fields.Integer(string='Left Margin (mm)')
     label_margin_right = fields.Integer(string='Right Margin (mm)')
+    paperformat_id = fields.Many2one('report.paperformat', string='Paper Format')
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
@@ -31,11 +32,21 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param('st_dynamic_product_label_print.label_margin_bottom', self.label_margin_bottom)
         ICP.set_param('st_dynamic_product_label_print.label_margin_left', self.label_margin_left)
         ICP.set_param('st_dynamic_product_label_print.label_margin_right', self.label_margin_right)
+        ICP.set_param('st_dynamic_product_label_print.paperformat_id', self.paperformat_id.id)
 
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
         ICP = self.env['ir.config_parameter'].sudo()
+        
+        paperformat_id_param = ICP.get_param('st_dynamic_product_label_print.paperformat_id')
+        paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
+        
+        if not paperformat_id:
+            paperformat_ref = self.env.ref('stock.paperformat_label_sheet_a4', raise_if_not_found=False)
+            if paperformat_ref:
+                paperformat_id = paperformat_ref.id
+
         res.update(
             label_rows=int(ICP.get_param('st_dynamic_product_label_print.label_rows', 7)),
             label_cols=int(ICP.get_param('st_dynamic_product_label_print.label_cols', 2)),
@@ -48,5 +59,6 @@ class ResConfigSettings(models.TransientModel):
             label_margin_bottom=int(ICP.get_param('st_dynamic_product_label_print.label_margin_bottom', 5)),
             label_margin_left=int(ICP.get_param('st_dynamic_product_label_print.label_margin_left', 5)),
             label_margin_right=int(ICP.get_param('st_dynamic_product_label_print.label_margin_right', 5)),
+            paperformat_id=paperformat_id,
         )
         return res
