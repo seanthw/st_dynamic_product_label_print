@@ -1,3 +1,4 @@
+import math
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
@@ -73,7 +74,22 @@ class ProductLabelWizard(models.TransientModel):
             'margin_right': margin_right,
         })
         
-        # Prepare data for the report
+        # --- Dynamic Font Size Calculation ---
+        initial_font_size = int(get_param('st_dynamic_product_label_print.label_font_size', 12))
+        
+        # Baseline layout dimensions (e.g., 7 rows, 2 columns)
+        base_rows, base_cols = 7.0, 2.0
+        base_label_area = (1 / base_rows) * (1 / base_cols)
+        
+        # Current layout dimensions
+        current_rows = self.rows if self.rows > 0 else base_rows
+        current_cols = self.cols if self.cols > 0 else base_cols
+        current_label_area = (1 / current_rows) * (1 / current_cols)
+        
+        # Calculate font size scaling factor based on the change in area.
+        scaling_factor = math.sqrt(current_label_area / base_label_area) if base_label_area > 0 else 1
+        final_font_size = initial_font_size * scaling_factor
+
         label_data = []
         for product in self.product_ids:
             quantity = product.qty_available if self.label_quantity == 'on_hand' else self.custom_quantity
@@ -92,6 +108,7 @@ class ProductLabelWizard(models.TransientModel):
                     'sequence': i + 1,
                     'total_quantity': quantity,
                     'on_hand_qty': product.qty_available,
+                    'font_size': final_font_size,
                 })
 
         # Chunk labels into pages
@@ -106,7 +123,6 @@ class ProductLabelWizard(models.TransientModel):
             'show_internal_ref': get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             'show_on_hand_qty': get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             'show_attributes': get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
-            'font_size': int(get_param('st_dynamic_product_label_print.label_font_size', 12)),
         }
         
         # Get the report action and generate the PDF using the temporary paperformat

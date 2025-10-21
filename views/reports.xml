@@ -5,7 +5,7 @@
         <t t-call="web.html_container">
             <t t-foreach="pages" t-as="labels">
                                 <t t-call="web.basic_layout">
-                                    <div class="page" t-attf-style="font-size: {{ font_size }}px; height: 280mm;">
+                                    <div class="page" t-attf-style="height: 280mm; display: flex; flex-direction: column; justify-content: center;">
                                         <t t-set="label_index" t-value="0"/>
                                         <table style="width: 100%; border-collapse: collapse;">
                                             <tbody>
@@ -15,10 +15,9 @@
                                                             <td t-attf-style="width: {{ 100 / cols }}%; height: {{ 280 / rows }}mm; padding: 1mm; vertical-align: top;">
                                                                 <t t-if="label_index &lt; len(labels)">
                                                                     <t t-set="label" t-value="labels[label_index]"/>
-                                                                    <div style="border: 1px solid black; padding: 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: center;">
+                                                                    <div t-attf-style="border: 1px solid black; padding: 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: center; font-size: {{ label.get('font_size', 12) }}px; line-height: 1.2;">
                                                                         <div class="text-center">
-                                                                            <div t-if="len(label['product_name']) > 25" style="font-weight: bold; font-size: 0.8em;"><t t-esc="label['product_name']"/></div>
-                                                                            <div t-else="" style="font-weight: bold;"><t t-esc="label['product_name']"/></div>
+                                                                            <div style="font-weight: bold;"><t t-esc="label['product_name']"/></div>
                                                                             <div t-if="show_attributes and label['attribute_string']" style="font-size: 0.8em;"><t t-esc="label['attribute_string']"/></div>
                                                                             <div t-if="show_internal_ref" style="font-size: 0.8em;">Code: <t t-esc="label['default_code']"/></div>
                                                                             <t t-if="label['barcode']">
@@ -32,17 +31,17 @@
                                                                                 <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
                                                                             </div>
                                                                         </div>
-                                                    </div>
-                                                    <t t-set="label_index" t-value="label_index + 1"/>
+                                                                    </div>
+                                                                    <t t-set="label_index" t-value="label_index + 1"/>
+                                                                </t>
+                                                            </td>
+                                                        </t>
+                                                    </tr>
                                                 </t>
-                                            </td>
-                                        </t>
-                                    </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </t>
-                            </tbody>
-                        </table>
-                    </div>
-                </t>
             </t>
         </t>
     </template>
