@@ -12,12 +12,11 @@
                                 <t t-foreach="range(rows)" t-as="row">
                                     <tr>
                                         <t t-foreach="range(cols)" t-as="col">
-                                            <td t-attf-style="width: {{ 100 / cols }}%; padding: 1mm; vertical-align: top;">
-                                                <t t-if="label_index &lt; len(labels)">
-                                                    <t t-set="label" t-value="labels[label_index]"/>
-                                                    <div style="border: 1px solid black; padding: 5px; height: 100%; page-break-inside: avoid;">
-                                                        <div class="text-center">
-                                                            <div style="font-weight: bold;"><t t-esc="label['product_name']"/></div>
+                                                                                    <td t-attf-style="width: {{ 100 / cols }}%; padding: 1mm; vertical-align: top;">
+                                                                                        <t t-if="label_index &lt; len(labels)">
+                                                                                            <t t-set="label" t-value="labels[label_index]"/>
+                                                                                            <div style="border: 1px solid black; padding: 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: center;">
+                                                                                                <div class="text-center">                                                            <div style="font-weight: bold;"><t t-esc="label['product_name']"/></div>
                                                             <div t-if="show_attributes and label['attribute_string']" style="font-size: 0.8em;"><t t-esc="label['attribute_string']"/></div>
                                                             <div t-if="show_internal_ref" style="font-size: 0.8em;">Code: <t t-esc="label['default_code']"/></div>
                                                             <t t-if="label['barcode']">
