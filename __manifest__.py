@@ -11,6 +11,7 @@
     "depends": ["stock", "product", "base_setup"],
     "data": [
         "security/ir.model.access.csv",
+        "data/default_settings.xml",
         "views/paper_formats.xml",
         "views/product_template_views.xml",
         "views/product_label_views.xml",
@@ -20,4 +21,5 @@
     "installable": True,
     "application": True,
     "license": "LGPL-3",
+    "post_init_hook": "_setup_default_paperformat",
 }

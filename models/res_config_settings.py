@@ -16,6 +16,7 @@ class ResConfigSettings(models.TransientModel):
     label_margin_bottom = fields.Integer(string='Bottom Margin (mm)')
     label_margin_left = fields.Integer(string='Left Margin (mm)')
     label_margin_right = fields.Integer(string='Right Margin (mm)')
+    paperformat_id = fields.Many2one('report.paperformat', string='Paper Format')
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
@@ -31,22 +32,28 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param('st_dynamic_product_label_print.label_margin_bottom', self.label_margin_bottom)
         ICP.set_param('st_dynamic_product_label_print.label_margin_left', self.label_margin_left)
         ICP.set_param('st_dynamic_product_label_print.label_margin_right', self.label_margin_right)
+        ICP.set_param('st_dynamic_product_label_print.paperformat_id', self.paperformat_id.id)
 
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
         ICP = self.env['ir.config_parameter'].sudo()
+        
+        paperformat_id_param = ICP.get_param('st_dynamic_product_label_print.paperformat_id')
+        paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
+
         res.update(
-            label_rows=int(ICP.get_param('st_dynamic_product_label_print.label_rows', 7)),
-            label_cols=int(ICP.get_param('st_dynamic_product_label_print.label_cols', 2)),
+            label_rows=int(ICP.get_param('st_dynamic_product_label_print.label_rows')),
+            label_cols=int(ICP.get_param('st_dynamic_product_label_print.label_cols')),
             label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
             label_show_internal_ref=ICP.get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             label_show_attributes=ICP.get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
-            label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size', 12)),
-            label_margin_top=int(ICP.get_param('st_dynamic_product_label_print.label_margin_top', 5)),
-            label_margin_bottom=int(ICP.get_param('st_dynamic_product_label_print.label_margin_bottom', 5)),
-            label_margin_left=int(ICP.get_param('st_dynamic_product_label_print.label_margin_left', 5)),
-            label_margin_right=int(ICP.get_param('st_dynamic_product_label_print.label_margin_right', 5)),
+            label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size')),
+            label_margin_top=int(ICP.get_param('st_dynamic_product_label_print.label_margin_top')),
+            label_margin_bottom=int(ICP.get_param('st_dynamic_product_label_print.label_margin_bottom')),
+            label_margin_left=int(ICP.get_param('st_dynamic_product_label_print.label_margin_left')),
+            label_margin_right=int(ICP.get_param('st_dynamic_product_label_print.label_margin_right')),
+            paperformat_id=paperformat_id,
         )
         return res
