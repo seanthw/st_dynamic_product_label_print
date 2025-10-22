@@ -1,3 +1,47 @@
+# [2.0.0](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.6...v2.0.0) (2025-10-22)
+
+
+### Features
+
+* Centralized Configuration and Dynamic Label Generation ([#3](https://github.com/seanthw/st_dynamic_product_label_print/issues/3)) ([3bbd25f](https://github.com/seanthw/st_dynamic_product_label_print/commit/3bbd25ffd29b8870b11f6fc1bb3f94cac1b74af1))
+
+
+### BREAKING CHANGES
+
+* The paper format is now configured in the general settings instead of the print wizard.
+
+* fix(report): ensure dynamic paper format persists for rendering
+
+The previous implementation prematurely deleted the temporary paper format record before the report rendering process could use it, causing a race condition and resulting in incorrect layouts. This commit removes the faulty cleanup logic, ensuring the dynamically generated paper format is available when the PDF is created.
+
+* feat: Implement multi-page label printing
+
+The label generation logic has been updated to support multi-page printing. The 'action_print_labels' method now chunks labels into pages, and the QWeb template iterates through these pages to render them correctly.
+
+* fix(style): Vertically center label content using flexbox
+
+The previous vertical alignment fix was not working as expected. This commit uses CSS flexbox to properly center the content within the label, ensuring that it is not cut off during printing.
+
+* fix(style): Add responsive font size for long product names
+
+The font size for the product name is now dynamically adjusted based on its length. If the name is longer than 25 characters, the font size is reduced to prevent the text from overflowing the label's boundaries.
+
+* fix(style): Implement proportional font scaling for all text
+
+The font size for the entire label is now calculated based on the label's area (width and height). This ensures all text elements scale proportionally, improving readability and layout consistency across different row/column configurations.
+
+* feat(style): Increase font size for barcode digits and label info
+
+The font sizes for the barcode digits and the secondary label information have been increased to improve readability.
+
+* feat: Enable barcode digits by default
+
+* style: Indent reports.xml
+
+* refactor(config): Centralize and correct default settings
+
+* docs: Update configuration instructions
+
 ## [1.1.6](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.5...v1.1.6) (2025-10-19)
 
 
