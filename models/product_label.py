@@ -18,8 +18,8 @@ class ProductLabelWizard(models.TransientModel):
         required=True,
     )
     custom_quantity = fields.Integer(string="Custom Quantity", default=1)
-    rows = fields.Integer(string="Rows", default=lambda self: int(self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.label_rows', 7)))
-    cols = fields.Integer(string="Columns", default=lambda self: int(self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.label_cols', 2)))
+    rows = fields.Integer(string="Rows", default=lambda self: int(self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.label_rows')))
+    cols = fields.Integer(string="Columns", default=lambda self: int(self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.label_cols')))
 
     @api.depends("product_ids", "label_quantity", "custom_quantity")
     def _compute_label_summary(self):
@@ -48,20 +48,15 @@ class ProductLabelWizard(models.TransientModel):
         
         # Get base paperformat
         paperformat_id_param = get_param('st_dynamic_product_label_print.paperformat_id')
-        base_paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
-        
-        if not base_paperformat_id:
-            # Fallback to a default if not configured
-            paperformat_ref = self.env.ref('stock.paperformat_label_sheet_a4', raise_if_not_found=False)
-            if not paperformat_ref:
-                raise UserError(_("No default paper format found. Please ensure the 'stock' module is installed or configure a base paper format in the settings."))
-            base_paperformat_id = paperformat_ref.id
+        if not paperformat_id_param or not paperformat_id_param.isdigit():
+            raise UserError(_("The paper format is not configured. Please configure it in the settings."))
+        base_paperformat_id = int(paperformat_id_param)
 
         # Get dynamic margin values from settings
-        margin_top = int(get_param('st_dynamic_product_label_print.label_margin_top', 5))
-        margin_bottom = int(get_param('st_dynamic_product_label_print.label_margin_bottom', 5))
-        margin_left = int(get_param('st_dynamic_product_label_print.label_margin_left', 5))
-        margin_right = int(get_param('st_dynamic_product_label_print.label_margin_right', 5))
+        margin_top = int(get_param('st_dynamic_product_label_print.label_margin_top'))
+        margin_bottom = int(get_param('st_dynamic_product_label_print.label_margin_bottom'))
+        margin_left = int(get_param('st_dynamic_product_label_print.label_margin_left'))
+        margin_right = int(get_param('st_dynamic_product_label_print.label_margin_right'))
 
         # Create a temporary paper format with the dynamic margins.
         # This is the best practice to handle dynamic report layouts in Odoo.
@@ -75,7 +70,7 @@ class ProductLabelWizard(models.TransientModel):
         })
         
         # --- Dynamic Font Size Calculation ---
-        initial_font_size = int(get_param('st_dynamic_product_label_print.label_font_size', 12))
+        initial_font_size = int(get_param('st_dynamic_product_label_print.label_font_size'))
         
         # Baseline layout dimensions (e.g., 7 rows, 2 columns)
         base_rows, base_cols = 7.0, 2.0

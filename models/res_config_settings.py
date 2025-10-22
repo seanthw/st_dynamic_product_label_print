@@ -41,24 +41,19 @@ class ResConfigSettings(models.TransientModel):
         
         paperformat_id_param = ICP.get_param('st_dynamic_product_label_print.paperformat_id')
         paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
-        
-        if not paperformat_id:
-            paperformat_ref = self.env.ref('stock.paperformat_label_sheet_a4', raise_if_not_found=False)
-            if paperformat_ref:
-                paperformat_id = paperformat_ref.id
 
         res.update(
-            label_rows=int(ICP.get_param('st_dynamic_product_label_print.label_rows', 7)),
-            label_cols=int(ICP.get_param('st_dynamic_product_label_print.label_cols', 2)),
-            label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits', 'True') == 'True',
+            label_rows=int(ICP.get_param('st_dynamic_product_label_print.label_rows')),
+            label_cols=int(ICP.get_param('st_dynamic_product_label_print.label_cols')),
+            label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
             label_show_internal_ref=ICP.get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             label_show_attributes=ICP.get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
-            label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size', 12)),
-            label_margin_top=int(ICP.get_param('st_dynamic_product_label_print.label_margin_top', 5)),
-            label_margin_bottom=int(ICP.get_param('st_dynamic_product_label_print.label_margin_bottom', 5)),
-            label_margin_left=int(ICP.get_param('st_dynamic_product_label_print.label_margin_left', 5)),
-            label_margin_right=int(ICP.get_param('st_dynamic_product_label_print.label_margin_right', 5)),
+            label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size')),
+            label_margin_top=int(ICP.get_param('st_dynamic_product_label_print.label_margin_top')),
+            label_margin_bottom=int(ICP.get_param('st_dynamic_product_label_print.label_margin_bottom')),
+            label_margin_left=int(ICP.get_param('st_dynamic_product_label_print.label_margin_left')),
+            label_margin_right=int(ICP.get_param('st_dynamic_product_label_print.label_margin_right')),
             paperformat_id=paperformat_id,
         )
         return res
