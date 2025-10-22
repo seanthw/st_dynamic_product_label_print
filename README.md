@@ -34,11 +34,14 @@ This module can be configured to match your specific label sheets and informatio
 
 You can customize the following options:
 
+### Paper Format
+-   **Paper Format:** Select the default paper format to be used for the label sheets. This is a required step for the module to function correctly.
+
 ### Layout
 -   **Number of Rows:** Define how many rows of labels are on a single page.
 -   **Number of Columns:** Define how many columns of labels are on a single page.
 
-> **Note:** This module uses a standard A4 paper format for the label sheet. To ensure your labels align correctly, you can adjust the page margins in the **Styling** section below.
+> A default paper format is set automatically on installation, but it is recommended to verify that the correct format for your label sheets is selected here.
 
 ### Content
 -   **Show Internal Reference:** Check this to display the product's internal reference on the label.
