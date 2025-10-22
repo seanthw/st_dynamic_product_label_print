@@ -66,7 +66,7 @@ There are two primary ways to print labels:
 
 ### Method 1: Printing Specific Product Variants
 
-This is the most common method for printing labels for specific items.
+This is the most common method for printing labels for for specific items.
 
 1.  Navigate to the **Inventory** module.
 2.  Go to **Products -> Product Variants**.
