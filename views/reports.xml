@@ -16,7 +16,7 @@
                                                 <t t-if="label_index &lt; len(labels)">
                                                     <t t-set="label" t-value="labels[label_index]"/>
                                                     <div t-attf-style="border: 1px solid black; padding: 10px 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: space-between; font-size: {{ label.get('font_size', 12) }}px; line-height: 1.2;">
-                                                        <div class="text-center" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                                                        <div class="text-center" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end;">
                                                             <div style="font-size: 1.2em; font-weight: bold;">
                                                                 <t t-esc="label['product_name']"/>
                                                             </div>
