@@ -12,6 +12,7 @@
                             <field name="product_ids" widget="many2many_tags" options="{'no_create': True}"/>
                         </group>
                         <group string="Print Settings">
+                            <field name="paperformat_id"/>
                             <field name="label_quantity"/>
                             <field name="custom_quantity" required="[('label_quantity', '=', 'custom')]" invisible="[('label_quantity', '!=', 'custom')]"/>
                             <field name="rows"/>
