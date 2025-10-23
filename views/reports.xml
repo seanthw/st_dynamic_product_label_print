@@ -34,7 +34,7 @@
                                                                     <t t-esc="label['barcode']"/>
                                                                 </div>
                                                             </t>
-                                                            <div style="font-size: 0.8em; color: #666;">
+                                                            <div t-if="show_stock_label" style="font-size: 0.8em; color: #666;">
                                                                 Label
                                                                 <t t-esc="label['sequence']"/>
                                                                 of

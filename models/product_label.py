@@ -117,6 +117,7 @@ class ProductLabelWizard(models.TransientModel):
             'show_barcode_digits': get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
             'show_internal_ref': get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             'show_on_hand_qty': get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
+            'show_stock_label': get_param('st_dynamic_product_label_print.label_show_stock_label') == 'True',
             'show_attributes': get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
         }
         

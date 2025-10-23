@@ -50,6 +50,10 @@
                                         <label for="label_show_on_hand_qty"/>
                                     </div>
                                     <div>
+                                        <field name="label_show_stock_label" class="o_light_label"/>
+                                        <label for="label_show_stock_label"/>
+                                    </div>
+                                    <div>
                                         <field name="label_show_attributes" class="o_light_label"/>
                                         <label for="label_show_attributes"/>
                                     </div>

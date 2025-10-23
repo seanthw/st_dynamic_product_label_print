@@ -10,6 +10,7 @@ class ResConfigSettings(models.TransientModel):
     label_show_barcode_digits = fields.Boolean(string='Show Barcode Digits')
     label_show_internal_ref = fields.Boolean(string='Show Internal Reference')
     label_show_on_hand_qty = fields.Boolean(string='Show On-Hand Quantity')
+    label_show_stock_label = fields.Boolean(string='Show Stock Label')
     label_show_attributes = fields.Boolean(string='Show Attributes')
     label_font_size = fields.Integer(string='Base Font Size (px)')
     label_margin_top = fields.Integer(string='Top Margin (mm)')
@@ -26,6 +27,7 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param('st_dynamic_product_label_print.label_show_barcode_digits', self.label_show_barcode_digits)
         ICP.set_param('st_dynamic_product_label_print.label_show_internal_ref', self.label_show_internal_ref)
         ICP.set_param('st_dynamic_product_label_print.label_show_on_hand_qty', self.label_show_on_hand_qty)
+        ICP.set_param('st_dynamic_product_label_print.label_show_stock_label', self.label_show_stock_label)
         ICP.set_param('st_dynamic_product_label_print.label_show_attributes', self.label_show_attributes)
         ICP.set_param('st_dynamic_product_label_print.label_font_size', self.label_font_size)
         ICP.set_param('st_dynamic_product_label_print.label_margin_top', self.label_margin_top)
@@ -48,6 +50,7 @@ class ResConfigSettings(models.TransientModel):
             label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
             label_show_internal_ref=ICP.get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
+            label_show_stock_label=ICP.get_param('st_dynamic_product_label_print.label_show_stock_label') == 'True',
             label_show_attributes=ICP.get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
             label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size')),
             label_margin_top=int(ICP.get_param('st_dynamic_product_label_print.label_margin_top')),
