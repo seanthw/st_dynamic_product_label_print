@@ -15,15 +15,15 @@
                                             <td t-attf-style="width: {{ 100 / cols }}%; height: {{ 280 / rows }}mm; padding: 1mm; vertical-align: top;">
                                                 <t t-if="label_index &lt; len(labels)">
                                                     <t t-set="label" t-value="labels[label_index]"/>
-                                                    <div t-attf-style="border: 1px solid black; padding: 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: center; font-size: {{ label.get('font_size', 12) }}px; line-height: 1.2;">
-                                                        <div class="text-center">
-                                                            <div style="font-weight: bold;">
+                                                    <div t-attf-style="border: 1px solid black; padding: 10px 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: space-between; font-size: {{ label.get('font_size', 12) }}px; line-height: 1.2;">
+                                                        <div class="text-center" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                                                            <div style="font-size: 1.2em; font-weight: bold;">
                                                                 <t t-esc="label['product_name']"/>
                                                             </div>
-                                                            <div t-if="show_attributes and label['attribute_string']" style="font-size: 0.8em;">
+                                                            <div t-if="show_attributes and label['attribute_string']" style="font-size: 0.9em;">
                                                                 <t t-esc="label['attribute_string']"/>
                                                             </div>
-                                                            <div t-if="show_internal_ref" style="font-size: 0.8em;">Code:
+                                                            <div t-if="show_internal_ref" style="font-size: 0.9em;">Code:
                                                                 <t t-esc="label['default_code']"/>
                                                             </div>
                                                             <t t-if="label['barcode']">
@@ -34,16 +34,16 @@
                                                                     <t t-esc="label['barcode']"/>
                                                                 </div>
                                                             </t>
-                                                            <div t-if="show_stock_label" style="font-size: 0.8em; color: #666;">
-                                                                Label
-                                                                <t t-esc="label['sequence']"/>
-                                                                of
-                                                                <t t-esc="label['total_quantity']"/>
-                                                                <span t-if="show_on_hand_qty">
-                                                                    | Stock:
-                                                                    <t t-esc="label['on_hand_qty']"/>
-                                                                </span>
-                                                            </div>
+                                                        </div>
+                                                        <div t-if="show_stock_label" class="text-center" style="font-size: 0.8em; color: #666;">
+                                                            Label
+                                                            <t t-esc="label['sequence']"/>
+                                                            of
+                                                            <t t-esc="label['total_quantity']"/>
+                                                            <span t-if="show_on_hand_qty">
+                                                                | Stock:
+                                                                <t t-esc="label['on_hand_qty']"/>
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <t t-set="label_index" t-value="label_index + 1"/>
