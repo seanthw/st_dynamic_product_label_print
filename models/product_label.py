@@ -42,6 +42,11 @@ class ProductLabelWizard(models.TransientModel):
             .get_param("st_dynamic_product_label_print.label_cols")
         ),
     )
+    skipped_pages = fields.Integer(
+        string="Skip Full Pages",
+        default=0,
+        help="Number of full blank pages to print at the start (e.g., to advance printer after jam).",
+    )
     start_row = fields.Integer(string="Start Row", default=1)
     start_col = fields.Integer(string="Start Column", default=1)
 
@@ -68,6 +73,14 @@ class ProductLabelWizard(models.TransientModel):
             raise UserError(
                 _("You need to select at least one product to print labels.")
             )
+
+        # Validation for start position
+        if self.start_row < 1 or self.start_row > self.rows:
+            raise UserError(_("Start Row must be between 1 and %d.") % self.rows)
+        if self.start_col < 1 or self.start_col > self.cols:
+            raise UserError(_("Start Column must be between 1 and %d.") % self.cols)
+        if self.skipped_pages < 0:
+            raise UserError(_("Skipped Pages must be 0 or greater."))
 
         # Fetch configuration parameters
         get_param = self.env["ir.config_parameter"].sudo().get_param
@@ -110,6 +123,7 @@ class ProductLabelWizard(models.TransientModel):
         # --- Layout Calculation ---
         rows = self.rows
         cols = self.cols
+        full_per_page = rows * cols
 
         # Get paper format dimensions and margins to calculate true printable area
         paperformat = self.paperformat_id
@@ -204,21 +218,26 @@ class ProductLabelWizard(models.TransientModel):
                     }
                 )
 
-        # Add empty labels for offset and then chunk into pages
-        start_offset = (self.start_row - 1) * self.cols + (self.start_col - 1)
-        labels_to_print = (self.rows * self.cols) - start_offset
-        
-        # Truncate the label list to the number of labels to print
-        label_data = label_data[:labels_to_print]
+        # --- Fixed Offset and Paging Logic ---
+        offset = (self.start_row - 1) * cols + (self.start_col - 1)
+        first_page_size = full_per_page - offset
 
-        if start_offset > 0:
-            label_data = ([{}] * start_offset) + label_data
+        # First page: empties + labels to fill it
+        first_page_labels = ([{}] * offset) + label_data[:first_page_size]
+        pages = [first_page_labels]
 
-        labels_per_page = rows * cols
-        pages = [
-            label_data[i : i + labels_per_page]
-            for i in range(0, len(label_data), labels_per_page)
-        ]
+        # Remaining labels: chunk into full (or partial) pages
+        remaining_labels = label_data[first_page_size:]
+        i = 0
+        while i < len(remaining_labels):
+            page_size = min(full_per_page, len(remaining_labels) - i)
+            pages.append(remaining_labels[i : i + page_size])
+            i += full_per_page
+
+        # --- Add Skipped Full Blank Pages at Start ---
+        blank_page = [{}] * full_per_page
+        for _ in range(self.skipped_pages):
+            pages.insert(0, blank_page)
 
         data = {
             "pages": pages,
@@ -258,3 +277,35 @@ class ProductLabelWizard(models.TransientModel):
         report_action.update({"close_on_report_download": True})
 
         return report_action
+
+
+class ProductTemplate(models.Model):
+    _inherit = "product.template"
+
+    def action_print_product_labels(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Print Product Labels",
+            "res_model": "product.label.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_product_ids": [(6, 0, self.product_variant_ids.ids)],
+            },
+        }
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    def action_print_labels(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Print Product Labels",
+            "res_model": "product.label.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_product_ids": [(6, 0, self.ids)],
+            },
+        }

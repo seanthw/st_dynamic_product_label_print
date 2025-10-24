@@ -15,6 +15,7 @@
                             <field name="paperformat_id"/>
                             <field name="label_quantity"/>
                             <field name="custom_quantity" required="[('label_quantity', '=', 'custom')]" invisible="[('label_quantity', '!=', 'custom')]"/>
+                            <field name="skipped_pages"/>
                             <field name="rows"/>
                             <field name="cols"/>
                             <field name="start_row"/>
