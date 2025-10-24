@@ -17,6 +17,8 @@
                             <field name="custom_quantity" required="[('label_quantity', '=', 'custom')]" invisible="[('label_quantity', '!=', 'custom')]"/>
                             <field name="rows"/>
                             <field name="cols"/>
+                            <field name="start_row"/>
+                            <field name="start_col"/>
                         </group>
                     </group>
                     

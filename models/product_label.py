@@ -42,6 +42,8 @@ class ProductLabelWizard(models.TransientModel):
             .get_param("st_dynamic_product_label_print.label_cols")
         ),
     )
+    start_row = fields.Integer(string="Start Row", default=1)
+    start_col = fields.Integer(string="Start Column", default=1)
 
     @api.depends("product_ids", "label_quantity", "custom_quantity")
     def _compute_label_summary(self):
@@ -202,7 +204,16 @@ class ProductLabelWizard(models.TransientModel):
                     }
                 )
 
-        # Chunk labels into pages
+        # Add empty labels for offset and then chunk into pages
+        start_offset = (self.start_row - 1) * self.cols + (self.start_col - 1)
+        labels_to_print = (self.rows * self.cols) - start_offset
+        
+        # Truncate the label list to the number of labels to print
+        label_data = label_data[:labels_to_print]
+
+        if start_offset > 0:
+            label_data = ([{}] * start_offset) + label_data
+
         labels_per_page = rows * cols
         pages = [
             label_data[i : i + labels_per_page]
