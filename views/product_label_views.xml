@@ -11,21 +11,22 @@
                         <group string="Product Selection">
                             <field name="product_ids" widget="many2many_tags" options="{'no_create': True}"/>
                         </group>
-                        <group string="Print Settings">
-                            <field name="label_quantity"/>
-                            <field name="custom_quantity" required="[('label_quantity', '=', 'custom')]" invisible="[('label_quantity', '!=', 'custom')]"/>
-                            <field name="rows"/>
-                            <field name="cols"/>
+                        <group string="Print Configuration">
+                            <field name="paperformat_id"/>
                         </group>
                     </group>
-                    
-                    <group string="Preview" invisible="[('product_ids', '=', [])]">
-                        <div class="alert alert-info">
-                            <strong>Label Summary:</strong>
-                            <div>
-                                <field name="label_summary" widget="text" nolabel="1"/>
-                            </div>
-                        </div>
+                    <group>
+                        <group string="Label Quantity">
+                            <field name="label_quantity"/>
+                            <field name="custom_quantity" required="[('label_quantity', '=', 'custom')]" invisible="[('label_quantity', '!=', 'custom')]"/>
+                        </group>
+                        <group string="Sheet Layout">
+                            <field name="rows"/>
+                            <field name="cols"/>
+                            <field name="start_row"/>
+                            <field name="start_col"/>
+                            <field name="skipped_pages"/>
+                        </group>
                     </group>
                 </sheet>
                 <footer>

@@ -28,7 +28,7 @@
         </record>
         <record id="default_label_font_size" model="ir.config_parameter">
             <field name="key">st_dynamic_product_label_print.label_font_size</field>
-            <field name="value">12</field>
+            <field name="value">14</field>
         </record>
         <record id="default_label_margin_top" model="ir.config_parameter">
             <field name="key">st_dynamic_product_label_print.label_margin_top</field>
