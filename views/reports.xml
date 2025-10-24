@@ -16,7 +16,7 @@
                                                 <t t-set="label" t-value="labels[row * cols + col] if (row * cols + col) &lt; len(labels) else {}"/>
                                                 
                                                 <!-- Label Box: Main container for content -->
-                                                <div t-if="label.get('product_name')" t-attf-style="border: 1.5px solid black; padding: 1mm; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: space-between; font-size: {{ label.get('font_size', 14) }}px; line-height: 1.2; box-sizing: border-box; overflow: hidden;">
+                                                <div t-if="label.get('product_name')" t-attf-style="border: 1.5px solid black; padding: 1mm; height: {{ (printable_height / rows) - 2 }}mm; width: 100%; display: flex; flex-direction: column; justify-content: space-between; font-size: {{ label.get('font_size', 14) }}px; line-height: 1.2; box-sizing: border-box; overflow: hidden;">
                                                     
                                                     <!-- Top Content: Product Info -->
                                                     <div class="text-center" style="overflow-wrap: break-word; margin-bottom: 1mm;">
