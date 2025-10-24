@@ -1,6 +1,6 @@
 {
     "name": "Dynamic Product Label Print",
-    'version': '2.0.0',
+    'version': '2.1.0',
     "category": "Inventory",
     "summary": "Print product labels with quantities based on stock",
     "description": """

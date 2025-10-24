@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/seanthw/st_dynamic_product_label_print/compare/v2.0.0...v2.1.0) (2025-10-24)
+
+
+### Features
+
+* **labels:** Overhaul label printing for uniformity and control ([#4](https://github.com/seanthw/st_dynamic_product_label_print/issues/4)) ([29be180](https://github.com/seanthw/st_dynamic_product_label_print/commit/29be18089d64bd6b2a69c02d5aa11c3a43f209a4)), closes [hi#density](https://github.com/hi/issues/density)
+
 # [2.0.0](https://github.com/seanthw/st_dynamic_product_label_print/compare/v1.1.6...v2.0.0) (2025-10-22)
 
 
