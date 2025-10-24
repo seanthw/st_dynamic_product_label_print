@@ -17,7 +17,7 @@ class ResConfigSettings(models.TransientModel):
     label_margin_bottom = fields.Integer(string='Bottom Margin (mm)')
     label_margin_left = fields.Integer(string='Left Margin (mm)')
     label_margin_right = fields.Integer(string='Right Margin (mm)')
-    paperformat_id = fields.Many2one('report.paperformat', string='Paper Format')
+    paperformat_id = fields.Many2one('report.paperformat', string='Default Paper Format')
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()

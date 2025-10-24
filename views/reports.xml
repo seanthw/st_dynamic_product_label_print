@@ -30,7 +30,7 @@
                                                                 <div style="padding-top: 5px; padding-bottom: 5px;">
                                                                     <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'img_style': 'width:100%;height:auto;max-height:40px;'}"/>
                                                                 </div>
-                                                                <div t-if="show_barcode_digits" t-attf-style="word-break: break-all;">
+                                                                <div t-if="show_barcode_digits" t-attf-style="font-size: {{ '0.8em' if cols >= 3 else '1.0em' }}; word-break: break-all;">
                                                                     <t t-esc="label['barcode']"/>
                                                                 </div>
                                                             </t>

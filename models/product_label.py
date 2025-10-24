@@ -18,7 +18,7 @@ class ProductLabelWizard(models.TransientModel):
         required=True,
     )
     custom_quantity = fields.Integer(string="Custom Quantity", default=1)
-    paperformat_id = fields.Many2one('report.paperformat', string='Paper Format', required=True)
+    paperformat_id = fields.Many2one('report.paperformat', string='Paper Format', required=False, default=lambda self: self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.paperformat_id'))
     rows = fields.Integer(string="Rows", default=lambda self: int(self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.label_rows')))
     cols = fields.Integer(string="Columns", default=lambda self: int(self.env['ir.config_parameter'].sudo().get_param('st_dynamic_product_label_print.label_cols')))
 
@@ -77,7 +77,14 @@ class ProductLabelWizard(models.TransientModel):
         # Get paper format dimensions and margins to calculate true printable area
         paperformat = self.paperformat_id
         if not paperformat:
-            raise UserError(_("Please select a paper format."))
+            # If not set in wizard, get from config
+            get_param = self.env['ir.config_parameter'].sudo().get_param
+            paperformat_id_param = get_param('st_dynamic_product_label_print.paperformat_id')
+            if paperformat_id_param and paperformat_id_param.isdigit():
+                paperformat = self.env['report.paperformat'].browse(int(paperformat_id_param))
+        
+        if not paperformat:
+            raise UserError(_("Please select a paper format in the wizard or set a default in the settings."))
             
         page_width = paperformat.page_width or 210
         page_height = paperformat.page_height or 297
