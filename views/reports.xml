@@ -12,14 +12,14 @@
                                     <tr style="page-break-inside: avoid;">
                                         <t t-foreach="range(cols)" t-as="col">
                                             <!-- Label Cell -->
-                                            <td t-attf-style="width: {{ 100 / cols }}%; height: {{ printable_height / rows }}mm; padding: 1mm; vertical-align: top; page-break-inside: avoid; box-sizing: border-box;">
+                                            <td t-attf-style="width: {{ 100 / cols }}%; padding: 1mm; vertical-align: top; page-break-inside: avoid; box-sizing: border-box;">
                                                 <t t-set="label" t-value="labels[row * cols + col] if (row * cols + col) &lt; len(labels) else {}"/>
                                                 
                                                 <!-- Label Box: Main container for content -->
                                                 <div t-if="label.get('product_name')" t-attf-style="border: 1.5px solid black; padding: 1mm; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: space-between; font-size: {{ label.get('font_size', 14) }}px; line-height: 1.2; box-sizing: border-box; overflow: hidden;">
                                                     
                                                     <!-- Top Content: Product Info -->
-                                                    <div class="text-center" style="overflow-wrap: break-word; margin-top: 1mm;">
+                                                    <div class="text-center" style="overflow-wrap: break-word; margin-bottom: 1mm;">
                                                         <div t-attf-style="font-weight: bold; font-size: {{ max(0.9, 1.1 - 0.07 * max(0, cols - 2)) }}em;"><t t-esc="label['product_name']"/></div>
                                                         <div t-if="show_attributes and label['attribute_string']" t-attf-style="font-size: {{ max(0.85, 1.05 - 0.07 * max(0, cols - 2)) }}em;"><t t-esc="label['attribute_string']"/></div>
                                                         <div t-if="show_internal_ref" t-attf-style="font-size: {{ max(0.8, 0.95 - 0.04 * max(0, cols - 2)) }}em;">Code: <t t-esc="label['default_code']"/></div>
