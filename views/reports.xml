@@ -12,25 +12,29 @@
                                 <t t-foreach="range(rows)" t-as="row">
                                     <tr>
                                         <t t-foreach="range(cols)" t-as="col">
-                                            <td t-attf-style="width: {{ printable_width / cols }}mm; height: {{ (printable_height / rows) * (1 + (cols-1)*0.1) if cols &lt; 5 else (printable_height / rows) * 1.4 }}mm; padding: 1mm; vertical-align: top;">
+                                            <td t-attf-style="width: {{ printable_width / cols }}mm; height: {{ (printable_height / rows) * 1.35 if cols == 2 else (printable_height / rows) * (1 + (cols-1)*0.1) if cols &lt; 5 else (printable_height / rows) * 1.4 }}mm; padding: 1mm; vertical-align: top;">
                                                 <t t-if="label_index &lt; len(labels)">
                                                     <t t-set="label" t-value="labels[label_index]"/>
-                                                    <div t-attf-style="border: 1px solid black; padding: 2px 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: center; font-size: {{ label.get('font_size', 12) }}px; line-height: 1.2;">
+                                                    <div t-attf-style="border: 1px solid black; padding: 2px 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: {{ 'space-between' if cols == 2 else 'center' }}; font-size: {{ label.get('font_size', 12) }}px; line-height: {{ '1.1' if cols >= 3 else '1.2' }};">
                                                         <div class="text-center">
-                                                            <div style="font-weight: bold;">
+                                                            <div t-attf-style="font-weight: bold; {{ 'overflow-wrap: break-word;' if cols >= 3 else '' }}">
                                                                 <t t-esc="label['product_name']"/>
                                                             </div>
-                                                            <div t-if="show_attributes and label['attribute_string']">
+                                                            <div t-if="show_attributes and label['attribute_string']" t-attf-style="{{ 'overflow-wrap: break-word;' if cols >= 3 else '' }}">
                                                                 <t t-esc="label['attribute_string']"/>
                                                             </div>
                                                             <div t-if="show_internal_ref">Code:
                                                                 <t t-esc="label['default_code']"/>
                                                             </div>
                                                             <t t-if="label['barcode']">
-                                                                <div style="padding-top: 5px; padding-bottom: 5px;">
-                                                                    <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'img_style': 'width:100%;height:auto;max-height:40px;'}"/>
+                                                                <t t-set="padding_style" t-value="'padding-top: 2px; padding-bottom: 2px;' if rows > 10 else 'padding-top: 5px; padding-bottom: 5px;'"/>
+                                                                <t t-set="img_style" t-value="'width:100%;height:auto;max-height:25px;' if rows > 10 else 'width:100%;height:auto;max-height:40px;'"/>
+                                                                <t t-set="font_size_style" t-value="'font-size: 0.7em;' if rows > 10 else ('font-size: 0.8em;' if cols >= 3 else 'font-size: 1.0em;')"/>
+                                                                
+                                                                <div t-att-style="padding_style">
+                                                                    <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'img_style': img_style}"/>
                                                                 </div>
-                                                                <div t-if="show_barcode_digits" t-attf-style="font-size: {{ '0.8em' if cols >= 3 else '1.0em' }}; word-break: break-all;">
+                                                                <div t-if="show_barcode_digits" t-att-style="font_size_style + ' word-break: break-all;'">
                                                                     <t t-esc="label['barcode']"/>
                                                                 </div>
                                                             </t>
