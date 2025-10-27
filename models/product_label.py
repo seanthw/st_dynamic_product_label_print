@@ -94,18 +94,21 @@ class ProductLabelWizard(models.TransientModel):
         """Arrange label data into pages with offsets and skipped pages."""
         full_per_page = self.rows * self.cols
         offset = (self.start_row - 1) * self.cols + (self.start_col - 1)
-        
-        first_page_size = full_per_page - offset
-        first_page_labels = ([{}] * offset) + label_data[:first_page_size]
-        
-        pages = [first_page_labels]
-        
-        remaining_labels = label_data[first_page_size:]
-        pages.extend(
-            remaining_labels[i : i + full_per_page]
-            for i in range(0, len(remaining_labels), full_per_page)
-        )
-        
+
+        # Create a single list of all items to be placed on the grid
+        all_items = ([{}] * offset) + label_data
+
+        # Chunk this list into pages of size full_per_page
+        pages = [
+            all_items[i : i + full_per_page]
+            for i in range(0, len(all_items), full_per_page)
+        ]
+
+        # Pad the last page to ensure it's a full grid, which is crucial for the renderer
+        if pages and len(pages[-1]) < full_per_page:
+            pages[-1].extend([{}] * (full_per_page - len(pages[-1])))
+
+        # Add blank pages if requested
         if self.skipped_pages > 0:
             blank_page = [{}] * full_per_page
             pages = ([blank_page] * self.skipped_pages) + pages
