@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/seanthw/st_dynamic_product_label_print/compare/v2.1.0...v2.1.1) (2025-10-27)
+
+
+### Bug Fixes
+
+* **report:** Prevent rendering crash on multi-page label reports ([#5](https://github.com/seanthw/st_dynamic_product_label_print/issues/5)) ([38df7d7](https://github.com/seanthw/st_dynamic_product_label_print/commit/38df7d70056c6e858020d5ff6b4f433c391240c0))
+
 # [2.1.0](https://github.com/seanthw/st_dynamic_product_label_print/compare/v2.0.0...v2.1.0) (2025-10-24)
 
 
