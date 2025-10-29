@@ -49,7 +49,7 @@
                                                     <!-- Bottom Content: Barcode and Stock Info -->
                                                     <div class="text-center bottom-content">
                                                         <t t-if="label['barcode']">
-                                                            <t t-set="barcode_width_percentage" t-value="45 + (max(0, cols - 2) * 10)"/>
+                                                            <t t-set="barcode_width_percentage" t-value="50 + (max(0, cols - 2) * 10)"/>
                                                             <div style="margin: 3mm auto 0;">
                                                                 <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'margin': 0, 'humanreadable': show_barcode_digits, 'img_style': 'width: ' + str(barcode_width_percentage) + '%; height: auto;'}"/>
                                                             </div>

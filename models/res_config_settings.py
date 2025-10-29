@@ -17,11 +17,13 @@ class ResConfigSettings(models.TransientModel):
     )
     default_rows = fields.Integer(
         "Default Rows",
+        default_model="product.label.wizard",
         config_parameter="st_dynamic_product_label_print.default_rows",
         default=7,
     )
     default_cols = fields.Integer(
         "Default Columns",
+        default_model="product.label.wizard",
         config_parameter="st_dynamic_product_label_print.default_cols",
         default=2,
     )
