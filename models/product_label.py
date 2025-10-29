@@ -23,11 +23,32 @@ class ProductLabelWizard(models.TransientModel):
         string="Paper Format",
         required=False,
     )
-    rows = fields.Integer(string="Rows", default=7)
-    cols = fields.Integer(string="Columns", default=2)
+    rows = fields.Integer(string="Rows", required=True)
+    cols = fields.Integer(string="Columns", required=True)
     skipped_pages = fields.Integer(string="Skip Full Pages", default=0)
     start_row = fields.Integer(string="Start Row", default=1)
     start_col = fields.Integer(string="Start Column", default=1)
+
+    show_barcode_digits = fields.Boolean(
+        string="Show Barcode Digits",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True"
+    )
+    show_internal_ref = fields.Boolean(
+        string="Show Internal Reference",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_internal_ref") == "True"
+    )
+    show_on_hand_qty = fields.Boolean(
+        string="Show On-Hand Quantity",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True"
+    )
+    show_stock_label = fields.Boolean(
+        string="Show Stock Label",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_stock_label") == "True"
+    )
+    show_attributes = fields.Boolean(
+        string="Show Attributes",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_attributes") == "True"
+    )
 
     def _get_config_params(self):
         """Fetch all required configuration parameters at once."""
@@ -60,9 +81,7 @@ class ProductLabelWizard(models.TransientModel):
 
     def _calculate_font_size(self, base_font_size):
         """Calculate a scaled font size based on rows and columns."""
-        row_factor = (7 / self.rows) ** 0.75
-        col_factor = (2 / self.cols) ** 0.75
-        return base_font_size * min(row_factor, col_factor)
+        return base_font_size
 
     def _prepare_label_data(self, font_size):
         """Prepare the list of dictionaries for each label to be printed."""
@@ -142,14 +161,28 @@ class ProductLabelWizard(models.TransientModel):
         page_width = paperformat.page_width or 210
         page_height = paperformat.page_height or 297
         
+        page_width = paperformat.page_width or 210
+        page_height = paperformat.page_height or 297
+        
+        printable_width = float(page_width or 0) - float(config.get("margin_left") or 0) - float(config.get("margin_right") or 0)
+        printable_height = float(page_height or 0) - float(config.get("margin_top") or 0) - float(config.get("margin_bottom") or 0)
+
         data = {
             "pages": pages,
             "rows": self.rows,
             "cols": self.cols,
-            "printable_width": page_width - config["margin_left"] - config["margin_right"],
-            "printable_height": page_height - config["margin_top"] - config["margin_bottom"],
+            "printable_width": printable_width,
+            "printable_height": printable_height,
             **config,
         }
+
+        data.update({
+            "show_barcode_digits": self.show_barcode_digits,
+            "show_internal_ref": self.show_internal_ref,
+            "show_on_hand_qty": self.show_on_hand_qty,
+            "show_stock_label": self.show_stock_label,
+            "show_attributes": self.show_attributes,
+        })
 
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
         report.paperformat_id = temp_paperformat.id
