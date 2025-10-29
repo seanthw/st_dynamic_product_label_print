@@ -11,7 +11,20 @@ class ResConfigSettings(models.TransientModel):
     label_show_internal_ref = fields.Boolean(string='Show Internal Reference')
     label_show_on_hand_qty = fields.Boolean(string='Show On-Hand Quantity')
     label_show_stock_label = fields.Boolean(string='Show Stock Label')
-    label_show_attributes = fields.Boolean(string='Show Attributes')
+    label_show_attributes = fields.Boolean(
+        "Show Attributes",
+        config_parameter="st_dynamic_product_label_print.label_show_attributes",
+    )
+    default_rows = fields.Integer(
+        "Default Rows",
+        config_parameter="st_dynamic_product_label_print.default_rows",
+        default=7,
+    )
+    default_cols = fields.Integer(
+        "Default Columns",
+        config_parameter="st_dynamic_product_label_print.default_cols",
+        default=2,
+    )
     label_font_size = fields.Integer(string='Base Font Size (px)')
     label_margin_top = fields.Integer(string='Top Margin (mm)')
     label_margin_bottom = fields.Integer(string='Bottom Margin (mm)')
