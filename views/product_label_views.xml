@@ -28,6 +28,17 @@
                             <field name="skipped_pages"/>
                         </group>
                     </group>
+                    <group string="Label Content Options">
+                        <group>
+                            <field name="show_attributes"/>
+                            <field name="show_internal_ref"/>
+                            <field name="show_barcode_digits"/>
+                        </group>
+                        <group>
+                            <field name="show_stock_label"/>
+                            <field name="show_on_hand_qty" invisible="not show_stock_label"/>
+                        </group>
+                    </group>
                 </sheet>
                 <footer>
                     <button name="action_print_labels" string="Print Labels" type="object" class="btn-primary"/>

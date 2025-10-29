@@ -29,6 +29,27 @@ class ProductLabelWizard(models.TransientModel):
     start_row = fields.Integer(string="Start Row", default=1)
     start_col = fields.Integer(string="Start Column", default=1)
 
+    show_barcode_digits = fields.Boolean(
+        string="Show Barcode Digits",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True"
+    )
+    show_internal_ref = fields.Boolean(
+        string="Show Internal Reference",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_internal_ref") == "True"
+    )
+    show_on_hand_qty = fields.Boolean(
+        string="Show On-Hand Quantity",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True"
+    )
+    show_stock_label = fields.Boolean(
+        string="Show Stock Label",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_stock_label") == "True"
+    )
+    show_attributes = fields.Boolean(
+        string="Show Attributes",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_attributes") == "True"
+    )
+
     def _get_config_params(self):
         """Fetch all required configuration parameters at once."""
         get_param = self.env["ir.config_parameter"].sudo().get_param
@@ -150,6 +171,14 @@ class ProductLabelWizard(models.TransientModel):
             "printable_height": page_height - config["margin_top"] - config["margin_bottom"],
             **config,
         }
+
+        data.update({
+            "show_barcode_digits": self.show_barcode_digits,
+            "show_internal_ref": self.show_internal_ref,
+            "show_on_hand_qty": self.show_on_hand_qty,
+            "show_stock_label": self.show_stock_label,
+            "show_attributes": self.show_attributes,
+        })
 
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
         report.paperformat_id = temp_paperformat.id
