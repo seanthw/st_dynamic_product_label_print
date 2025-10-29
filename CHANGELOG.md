@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/seanthw/st_dynamic_product_label_print/compare/v2.1.1...v2.2.0) (2025-10-29)
+
+
+### Features
+
+* **labels:** Enhance dynamic label layout and barcode scaling ([#6](https://github.com/seanthw/st_dynamic_product_label_print/issues/6)) ([dde6d85](https://github.com/seanthw/st_dynamic_product_label_print/commit/dde6d85aab5d7661a0f16552ae625954a30a3569))
+
 ## [2.1.1](https://github.com/seanthw/st_dynamic_product_label_print/compare/v2.1.0...v2.1.1) (2025-10-27)
 
 
