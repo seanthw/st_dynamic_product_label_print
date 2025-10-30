@@ -21,6 +21,7 @@
                                 text-align: center;
                                 overflow: hidden;
                                 box-sizing: border-box;
+                                padding: 1mm;
                             }
                             .o_label_full {
                                 border: 1px solid #000;
@@ -35,23 +36,38 @@
                                 font-weight: bold;
                                 font-size: 1.1em;
                                 overflow-wrap: break-word;
+                                text-align: left;
                             }
                             .o_label_data {
                                 flex-grow: 1;
                                 display: flex;
                                 flex-direction: column;
-                                justify-content: flex-end;
+                                justify-content: center; /* Changed to center for middle placement */
                             }
-                            .attribute-string, .internal-ref {
+                            .o_label_left_column {
+                                float: left;
+                                width: 85%; /* Increased width */
+                                text-align: left;
+                            }
+                            .o_label_right_column {
+                                float: right;
+                                width: 15%; /* Adjusted width */
+                                text-align: right;
+                            }
+                            .attribute-string {
                                 font-size: 0.9em;
                                 overflow-wrap: break-word;
+                                text-align: left;
                             }
                             .barcode-container {
-                                margin: 1mm auto;
+                                margin: 0 auto; /* Removed top margin, centered horizontally */
+                                width: 95%; /* Increased width */
+                                height: auto;
                             }
                             .stock-label {
                                 font-size: 0.8em;
                                 color: #666;
+                                text-align: left;
                             }
                         </style>
 
@@ -66,14 +82,21 @@
                                                     
                                                     <div class="o_label_name"><t t-esc="label['product_name']"/></div>
                                                     <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
-                                                    <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
                                                     
                                                     <div class="o_label_data">
-                                                        <t t-if="label['barcode']">
-                                                            <div class="barcode-container" t-attf-style="max-height: {{ label.get('barcode_max_height') }};">
-                                                                <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 400, 'height': 150, 'margin': 0, 'humanreadable': show_barcode_digits, 'img_style': 'width: 100%; height: auto; max-height: 100%;'}"/>
-                                                            </div>
-                                                        </t>
+                                                        <div class="o_label_left_column">
+                                                            <t t-if="label['barcode']">
+                                                                <div class="barcode-container">
+                                                                    <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'margin': 0, 'humanreadable': 0, 'img_style': 'width: 100%; height: auto;'}"/>
+                                                                    <span t-if="show_barcode_digits"><t t-esc="label['barcode']"/></span>
+                                                                </div>
+                                                            </t>
+                                                            <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
+                                                        </div>
+                                                        <div class="o_label_right_column">
+                                                            <!-- This is where the price would go in the default template -->
+                                                        </div>
+                                                        <div style="clear:both;"/>
                                                         <div t-if="show_stock_label" class="stock-label">
                                                             Label <t t-esc="label['sequence']"/> of <t t-esc="label['total_quantity']"/>
                                                             <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
