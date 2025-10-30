@@ -103,9 +103,37 @@ class ProductLabelWizard(models.TransientModel):
         """Calculate a scaled font size based on rows and columns."""
         return base_font_size
 
-    def _prepare_label_data(self, font_size):
+    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size):
+        """Calculate dynamic style properties based on label dimensions."""
+        
+        # 1. Calculate a reasonable font size
+        # Heuristic: Base size adjusted by the smaller of the width/height ratios
+        # This is a starting point and can be refined.
+        width_ratio = label_width / 70  # Assuming a "standard" label width of 70mm
+        height_ratio = label_height / 35 # Assuming a "standard" label height of 35mm
+        font_size = base_font_size * min(width_ratio, height_ratio, 1.0) # Don't exceed base size
+        font_size = max(font_size, 8) # Set a minimum font size of 8px
+
+        # 2. Calculate barcode max height
+        barcode_max_height = label_height * 0.3 # Barcode shouldn't take more than 30% of the height
+
+        # 3. Calculate vertical padding (for vertical centering)
+        # This is a simplified calculation. A more complex one would measure text height.
+        # For now, we'll use a ratio.
+        padding_vertical = label_height * 0.1 # 10% top/bottom padding
+        
+        return {
+            'font_size': f"{font_size:.2f}px",
+            'padding': f"{padding_vertical:.2f}mm 1mm", # Vertical padding, fixed horizontal
+            'barcode_max_height': f"{barcode_max_height:.2f}mm",
+        }
+
+    def _prepare_label_data(self, font_size, label_width, label_height):
         """Prepare the list of dictionaries for each label to be printed."""
         label_data = []
+        
+        dynamic_styles = self._calculate_dynamic_styles(label_width, label_height, font_size)
+
         for product in self.product_ids:
             quantity = (
                 product.qty_available
@@ -117,7 +145,7 @@ class ProductLabelWizard(models.TransientModel):
                 product.product_template_attribute_value_ids.mapped("name")
             )
             for i in range(quantity):
-                label_data.append({
+                label_info = {
                     "product_name": product.name,
                     "attribute_string": attribute_string,
                     "default_code": product.default_code or "",
@@ -125,8 +153,9 @@ class ProductLabelWizard(models.TransientModel):
                     "sequence": i + 1,
                     "total_quantity": quantity,
                     "on_hand_qty": product.qty_available,
-                    "font_size": font_size,
-                })
+                }
+                label_info.update(dynamic_styles)
+                label_data.append(label_info)
         return label_data
 
     def _prepare_pages(self, label_data):
@@ -174,21 +203,21 @@ class ProductLabelWizard(models.TransientModel):
             "margin_right": config["margin_right"],
         })
 
-        font_size = self._calculate_font_size(config["font_size"])
-        label_data = self._prepare_label_data(font_size)
-        pages = self._prepare_pages(label_data)
+        report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
+        report.paperformat_id = temp_paperformat.id
 
-        page_width = paperformat.page_width or 210
-        page_height = paperformat.page_height or 297
-        
         page_width = paperformat.page_width or 210
         page_height = paperformat.page_height or 297
         
         printable_width = float(page_width or 0) - float(config.get("margin_left") or 0) - float(config.get("margin_right") or 0)
         printable_height = float(page_height or 0) - float(config.get("margin_top") or 0) - float(config.get("margin_bottom") or 0)
 
-        label_width = printable_width / self.cols if self.cols > 0 else 0
-        label_height = printable_height / self.rows if self.rows > 0 else 0
+        font_size = self._calculate_font_size(config["font_size"])
+        label_width = (printable_width / self.cols) if self.cols > 0 else 0
+        label_height = (printable_height / self.rows) if self.rows > 0 else 0
+        
+        label_data = self._prepare_label_data(font_size, label_width, label_height)
+        pages = self._prepare_pages(label_data)
 
         data = {
             "pages": pages,
@@ -208,9 +237,6 @@ class ProductLabelWizard(models.TransientModel):
             "show_stock_label": self.show_stock_label,
             "show_attributes": self.show_attributes,
         })
-
-        report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
-        report.paperformat_id = temp_paperformat.id
 
         report_action = report.report_action(None, data=data)
         report_action.update({"close_on_report_download": True})

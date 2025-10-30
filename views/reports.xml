@@ -5,70 +5,85 @@
         <t t-call="web.html_container">
             <t t-foreach="pages" t-as="labels">
                 <t t-call="web.basic_layout">
-                    <div class="page" t-attf-style="height: {{ printable_height }}mm; display: flex; flex-wrap: wrap; align-content: flex-start;">
+                    <div class="page" t-attf-style="width: 100%; height: {{ printable_height }}mm;">
                         <style>
-                            .label-cell {
-                                box-sizing: border-box;
-                                overflow: hidden;
-                                page-break-inside: avoid;
-                                display: flex; /* Use flexbox for centering */
-                                justify-content: center; /* Center horizontally */
-                                align-items: center; /* Center vertically */
-                                padding: 1mm; /* Add some padding around the label box */
-                            }
+                            /* Basic styles for structure and overflow handling */
                             .label-box {
-                                border: 1.5px solid black;
-                                width: 100%;
-                                height: 100%;
+                                border: 1px solid black;
                                 display: flex;
                                 flex-direction: column;
                                 box-sizing: border-box;
                                 overflow: hidden;
-                                padding: 1mm;
+                                height: 100%;
+                                width: 100%;
                             }
                             .top-content {
                                 flex-grow: 1;
                                 display: flex;
                                 flex-direction: column;
                                 justify-content: center;
-                                overflow-wrap: break-word;
+                                text-align: center;
+                                overflow: hidden;
                             }
                             .bottom-content {
                                 flex-shrink: 0;
+                                text-align: center;
+                                overflow: hidden;
+                                margin-top: auto; /* Pushes the barcode to the bottom */
+                            }
+                            .product-name, .attribute-string, .internal-ref {
                                 overflow-wrap: break-word;
                             }
+                            .product-name { font-weight: bold; }
+                            .attribute-string { font-size: 0.9em; }
+                            .internal-ref { font-size: 0.85em; }
+                            .stock-label { font-size: 0.8em; color: #666; }
+                            .barcode-container {
+                                margin: 0 auto;
+                                width: 100%;
+                                max-width: 90%; /* Ensure barcode doesn't touch the edges */
+                            }
                         </style>
-                        
-                        <t t-foreach="labels" t-as="label">
-                            <!-- Label Cell -->
-                            <div class="label-cell" t-attf-style="width: {{ label_width }}mm; height: {{ label_height }}mm;">
-                                <!-- Label Box: Main container for content -->
-                                <div t-if="label.get('product_name')" class="label-box" t-attf-style="font-size: {{ label.get('font_size', 14) }}px; line-height: 1.2;">
-                                    
-                                    <!-- Top Content: Product Info -->
-                                    <div class="text-center top-content">
-                                        <div t-attf-style="font-weight: bold; font-size: {{ max(1.0, 1.2 - 0.03 * max(0, cols - 2)) }}em;"><t t-esc="label['product_name']"/></div>
-                                        <div t-if="show_attributes and label['attribute_string']" t-attf-style="font-size: {{ max(0.9, 1.1 - 0.03 * max(0, cols - 2)) }}em;"><t t-esc="label['attribute_string']"/></div>
-                                        <div t-if="show_internal_ref" t-attf-style="font-size: {{ max(0.85, 1.0 - 0.02 * max(0, cols - 2)) }}em;">Code: <t t-esc="label['default_code']"/></div>
-                                    </div>
-                                    
-                                    <!-- Bottom Content: Barcode and Stock Info -->
-                                    <div class="text-center bottom-content">
-                                        <t t-if="label['barcode']">
-                                            <t t-set="barcode_width_percentage" t-value="50 + (max(0, cols - 2) * 10)"/>
-                                            <div style="margin: 3mm auto 0;">
-                                                <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'margin': 0, 'humanreadable': show_barcode_digits, 'img_style': 'width: ' + str(barcode_width_percentage) + '%; height: auto;'}"/>
-                                            </div>
-                                        </t>
-                                        <div t-if="show_stock_label" style="color: #666; font-size: 0.85em; margin-top: 1mm;">
-                                            Label <t t-esc="label['sequence']"/> of <t t-esc="label['total_quantity']"/>
-                                            <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
-                                        </div>
-                                    </div>
+                        <!-- Conditionally center the table for single-column layouts -->
+                        <table t-attf-style="width: {{ cols == 1 and '70%' or '100%' }}; height: 100%; border-collapse: collapse; border-spacing: 0; {{ cols == 1 and 'margin: 0 auto;' or '' }}">
+                            <tbody>
+                                <t t-foreach="range(rows)" t-as="row">
+                                    <tr style="page-break-inside: avoid;">
+                                        <t t-foreach="range(cols)" t-as="col">
+                                            <t t-set="label" t-value="labels[row * cols + col] if (row * cols + col) &lt; len(labels) else {}"/>
+                                            <!-- Label Cell -->
+                                            <td t-attf-style="width: {{ 100 / cols }}%; height: {{ 100 / rows }}%; padding: 1mm; vertical-align: top; page-break-inside: avoid; box-sizing: border-box;">
+                                                
+                                                <!-- Label Box: Applies dynamic styles -->
+                                                <div t-if="label.get('product_name')" class="label-box" t-attf-style="font-size: {{ label.get('font_size') }}; padding: {{ label.get('padding') }}; line-height: 1.1;">
+                                                    
+                                                    <!-- Top Content: Product Info -->
+                                                    <div class="top-content">
+                                                        <div class="product-name"><t t-esc="label['product_name']"/></div>
+                                                        <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
+                                                        <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
+                                                    </div>
+                                                    
+                                                    <!-- Bottom Content: Barcode and Stock Info -->
+                                                    <div class="bottom-content">
+                                                        <t t-if="label['barcode']">
+                                                            <div class="barcode-container" t-attf-style="max-height: {{ label.get('barcode_max_height') }};">
+                                                                <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'margin': 0, 'humanreadable': show_barcode_digits, 'img_style': 'width: 100%; height: auto; max-height: 100%;'}"/>
+                                                            </div>
+                                                        </t>
+                                                        <div t-if="show_stock_label" class="stock-label">
+                                                            Label <t t-esc="label['sequence']"/> of <t t-esc="label['total_quantity']"/>
+                                                            <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
+                                                        </div>
+                                                    </div>
 
-                                </div>
-                            </div>
-                        </t>
+                                                </div>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
                     </div>
                 </t>
             </t>
