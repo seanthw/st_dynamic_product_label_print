@@ -29,6 +29,26 @@ class ProductLabelWizard(models.TransientModel):
     start_row = fields.Integer(string="Start Row", default=1)
     start_col = fields.Integer(string="Start Column", default=1)
 
+    @api.model
+    def default_get(self, fields_list):
+        """Load default values from system configuration."""
+        res = super().default_get(fields_list)
+        get_param = self.env["ir.config_parameter"].sudo().get_param
+        
+        default_paperformat_id = get_param("st_dynamic_product_label_print.paperformat_id")
+        if default_paperformat_id:
+            res["paperformat_id"] = int(default_paperformat_id)
+            
+        default_rows = get_param("st_dynamic_product_label_print.label_rows")
+        if default_rows:
+            res["rows"] = int(default_rows)
+            
+        default_cols = get_param("st_dynamic_product_label_print.label_cols")
+        if default_cols:
+            res["cols"] = int(default_cols)
+            
+        return res
+
     show_barcode_digits = fields.Boolean(
         string="Show Barcode Digits",
         default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True"
@@ -167,12 +187,17 @@ class ProductLabelWizard(models.TransientModel):
         printable_width = float(page_width or 0) - float(config.get("margin_left") or 0) - float(config.get("margin_right") or 0)
         printable_height = float(page_height or 0) - float(config.get("margin_top") or 0) - float(config.get("margin_bottom") or 0)
 
+        label_width = printable_width / self.cols if self.cols > 0 else 0
+        label_height = printable_height / self.rows if self.rows > 0 else 0
+
         data = {
             "pages": pages,
             "rows": self.rows,
             "cols": self.cols,
             "printable_width": printable_width,
             "printable_height": printable_height,
+            "label_width": label_width,
+            "label_height": label_height,
             **config,
         }
 
