@@ -1,2 +1,2 @@
 from . import models
-from .hooks import _setup_default_paperformat
+from .hooks import post_init_hook

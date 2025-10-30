@@ -25,6 +25,14 @@
                                         <label for="label_cols" class="col-lg-3 o_light_label"/>
                                         <field name="label_cols"/>
                                     </div>
+                                    <div class="row mt16">
+                                        <label for="label_width" class="col-lg-3 o_light_label"/>
+                                        <field name="label_width"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="label_height" class="col-lg-3 o_light_label"/>
+                                        <field name="label_height"/>
+                                    </div>
                                     <div class="row">
                                         <label for="paperformat_id" class="col-lg-3 o_light_label"/>
                                         <field name="paperformat_id"/>

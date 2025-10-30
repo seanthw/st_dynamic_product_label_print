@@ -23,8 +23,16 @@ class ProductLabelWizard(models.TransientModel):
         string="Paper Format",
         required=False,
     )
-    rows = fields.Integer(string="Rows", required=True)
-    cols = fields.Integer(string="Columns", required=True)
+    rows = fields.Integer(
+        string="Rows",
+        required=True,
+        default=lambda self: self.env['res.config.settings'].default_get(['label_rows']).get('label_rows', 10),
+    )
+    cols = fields.Integer(
+        string="Columns",
+        required=True,
+        default=lambda self: self.env['res.config.settings'].default_get(['label_cols']).get('label_cols', 3),
+    )
     skipped_pages = fields.Integer(string="Skip Full Pages", default=0)
     start_row = fields.Integer(string="Start Row", default=1)
     start_col = fields.Integer(string="Start Column", default=1)
@@ -38,14 +46,6 @@ class ProductLabelWizard(models.TransientModel):
         default_paperformat_id = get_param("st_dynamic_product_label_print.paperformat_id")
         if default_paperformat_id:
             res["paperformat_id"] = int(default_paperformat_id)
-            
-        default_rows = get_param("st_dynamic_product_label_print.label_rows")
-        if default_rows:
-            res["rows"] = int(default_rows)
-            
-        default_cols = get_param("st_dynamic_product_label_print.label_cols")
-        if default_cols:
-            res["cols"] = int(default_cols)
             
         return res
 
@@ -80,13 +80,15 @@ class ProductLabelWizard(models.TransientModel):
             "margin_left": int(get_param("st_dynamic_product_label_print.label_margin_left", 10)),
             "margin_right": int(get_param("st_dynamic_product_label_print.label_margin_right", 10)),
             "font_size": int(get_param("st_dynamic_product_label_print.label_font_size", 16)),
+            "label_width": float(get_param("st_dynamic_product_label_print.label_width", 70.0)),
+            "label_height": float(get_param("st_dynamic_product_label_print.label_height", 35.0)),
             "show_barcode_digits": get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True",
             "show_internal_ref": get_param("st_dynamic_product_label_print.label_show_internal_ref") == "True",
             "show_on_hand_qty": get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True",
             "show_stock_label": get_param("st_dynamic_product_label_print.label_show_stock_label") == "True",
             "show_attributes": get_param("st_dynamic_product_label_print.label_show_attributes") == "True",
-            "reference_width": float(get_param("st_dynamic_product_label_print.label_reference_width", 67.0)),
-            "reference_height": float(get_param("st_dynamic_product_label_print.label_reference_height", 25.0)),
+            "reference_width": float(get_param("st_dynamic_product_label_print.label_reference_width", 70.0)),
+            "reference_height": float(get_param("st_dynamic_product_label_print.label_reference_height", 35.0)),
         }
 
     def _validate_inputs(self):
@@ -109,20 +111,17 @@ class ProductLabelWizard(models.TransientModel):
         """Calculate dynamic style properties based on label dimensions."""
         
         # 1. Calculate a reasonable font size
-        # Heuristic: Base size adjusted by the smaller of the width/height ratios
-        # This is a starting point and can be refined.
         width_ratio = label_width / reference_width if reference_width else 1
         height_ratio = label_height / reference_height if reference_height else 1
-        font_size = base_font_size * min(width_ratio, height_ratio, 1.0) # Don't exceed base size
-        font_size = max(font_size, 8) # Set a minimum font size of 8px
+        # Use a less aggressive scaling factor for font size
+        font_size = base_font_size * (min(width_ratio, height_ratio) * 0.7 + 0.3)
+        font_size = max(font_size, 11) # Set a minimum font size of 11px
 
         # 2. Calculate barcode max height
-        barcode_max_height = label_height * 0.25 # Barcode shouldn't take more than 25% of the height
+        barcode_max_height = label_height * 0.25 # Barcode can take up to 25% of the height
 
-        # 3. Calculate vertical padding (for vertical centering)
-        # This is a simplified calculation. A more complex one would measure text height.
-        # For now, we'll use a ratio.
-        padding_vertical = label_height * 0.1 # 10% top/bottom padding
+        # 3. Calculate vertical padding
+        padding_vertical = label_height * 0.05 # 5% top/bottom padding
         
         return {
             'font_size': f"{font_size:.2f}px",
@@ -160,31 +159,6 @@ class ProductLabelWizard(models.TransientModel):
                 label_data.append(label_info)
         return label_data
 
-    def _prepare_pages(self, label_data):
-        """Arrange label data into pages with offsets and skipped pages."""
-        full_per_page = self.rows * self.cols
-        offset = (self.start_row - 1) * self.cols + (self.start_col - 1)
-
-        # Create a single list of all items to be placed on the grid
-        all_items = ([{}] * offset) + label_data
-
-        # Chunk this list into pages of size full_per_page
-        pages = [
-            all_items[i : i + full_per_page]
-            for i in range(0, len(all_items), full_per_page)
-        ]
-
-        # Pad the last page to ensure it's a full grid, which is crucial for the renderer
-        if pages and len(pages[-1]) < full_per_page:
-            pages[-1].extend([{}] * (full_per_page - len(pages[-1])))
-
-        # Add blank pages if requested
-        if self.skipped_pages > 0:
-            blank_page = [{}] * full_per_page
-            pages = ([blank_page] * self.skipped_pages) + pages
-            
-        return pages
-
     def action_print_labels(self):
         self._validate_inputs()
         config = self._get_config_params()
@@ -196,7 +170,19 @@ class ProductLabelWizard(models.TransientModel):
             else:
                 raise UserError(_("You must either select a paper format in the wizard or set a default paper format in the settings."))
 
-        # Create a temporary paper format with the dynamic margins. This is the correct Odoo practice.
+        # Calculate available height and adjust label height if necessary
+        # Extra height per label for padding (in mm)
+        # 1mm padding top and bottom for the table cell = 2mm
+        extra_height_per_label = 2
+        available_height = paperformat.page_height - config["margin_top"] - config["margin_bottom"]
+        required_height = self.rows * (config["label_height"] + extra_height_per_label)
+        
+        if required_height > available_height:
+            label_height = (available_height / self.rows) - extra_height_per_label
+        else:
+            label_height = config["label_height"]
+
+        # Create a temporary paper format with the dynamic margins.
         temp_paperformat = paperformat.copy({
             "name": f"Dynamic Label Paperformat - {self.id}",
             "margin_top": config["margin_top"],
@@ -208,32 +194,34 @@ class ProductLabelWizard(models.TransientModel):
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
         report.paperformat_id = temp_paperformat.id
 
-        page_width = paperformat.page_width or 210
-        page_height = paperformat.page_height or 297
-        
-        printable_width = float(page_width or 0) - float(config.get("margin_left") or 0) - float(config.get("margin_right") or 0)
-        printable_height = float(page_height or 0) - float(config.get("margin_top") or 0) - float(config.get("margin_bottom") or 0)
-
-        font_size = self._calculate_font_size(config["font_size"])
-        label_width = (printable_width / self.cols) if self.cols > 0 else 0
-        label_height = (printable_height / self.rows) if self.rows > 0 else 0
-        
-        label_data = self._prepare_label_data(
-            font_size, 
-            label_width, 
+        # Prepare a single flat list of all labels
+        all_labels = self._prepare_label_data(
+            config["font_size"], 
+            config["label_width"], 
             label_height, 
             config["reference_width"], 
             config["reference_height"]
         )
-        pages = self._prepare_pages(label_data)
+        
+        # Add offsets for skipped cells
+        offset = (self.start_row - 1) * self.cols + (self.start_col - 1)
+        all_labels = ([{}] * offset) + all_labels
+
+        # Calculate page numbers
+        if self.rows <= 0 or self.cols <= 0:
+            raise UserError(_("The number of rows and columns must be greater than zero."))
+        labels_per_page = self.rows * self.cols
+        if not labels_per_page:
+            raise UserError(_("Please configure the number of rows and columns for the labels."))
+        page_numbers = math.ceil(len(all_labels) / labels_per_page)
 
         data = {
-            "pages": pages,
+            "labels": all_labels,
+            "page_numbers": int(page_numbers),
+            "labels_per_page": labels_per_page,
             "rows": self.rows,
             "cols": self.cols,
-            "printable_width": printable_width,
-            "printable_height": printable_height,
-            "label_width": label_width,
+            "label_width": config["label_width"],
             "label_height": label_height,
             **config,
         }
