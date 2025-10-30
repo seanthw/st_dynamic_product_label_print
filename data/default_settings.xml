@@ -4,11 +4,11 @@
         <!-- Default Label Print Settings -->
         <record id="default_label_rows" model="ir.config_parameter">
             <field name="key">st_dynamic_product_label_print.label_rows</field>
-            <field name="value">7</field>
+            <field name="value">10</field>
         </record>
         <record id="default_label_cols" model="ir.config_parameter">
             <field name="key">st_dynamic_product_label_print.label_cols</field>
-            <field name="value">2</field>
+            <field name="value">3</field>
         </record>
         <record id="default_label_show_barcode_digits" model="ir.config_parameter">
             <field name="key">st_dynamic_product_label_print.label_show_barcode_digits</field>

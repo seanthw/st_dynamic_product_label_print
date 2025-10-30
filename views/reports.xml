@@ -1,74 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Report Template -->
     <template id="report_product_labels">
         <t t-call="web.html_container">
-            <t t-foreach="pages" t-as="labels">
+            <t t-foreach="pages" t-as="page_labels">
                 <t t-call="web.basic_layout">
-                    <div class="page" t-attf-style="width: 100%; height: {{ printable_height }}mm;">
+                    <div class="page">
                         <style>
-                            /* Basic styles for structure and overflow handling */
-                            .label-box {
-                                border: 1px solid black;
-                                display: flex;
-                                flex-direction: column;
-                                box-sizing: border-box;
+                            .o_label_sheet {
+                                width: {{ printable_width }}mm;
+                                height: {{ printable_height }}mm;
+                                margin: 0 auto;
+                            }
+                            .label_table {
+                                width: 100%;
+                                height: 100%;
+                                border-spacing: 0;
+                                border-collapse: collapse;
+                            }
+                            .label_cell {
+                                text-align: center;
                                 overflow: hidden;
+                                box-sizing: border-box;
+                            }
+                            .o_label_full {
+                                border: 1px solid #000;
                                 height: 100%;
                                 width: 100%;
+                                box-sizing: border-box;
+                                padding: 2mm;
+                                display: flex;
+                                flex-direction: column;
                             }
-                            .top-content {
+                            .o_label_name {
+                                font-weight: bold;
+                                font-size: 1.1em;
+                                overflow-wrap: break-word;
+                            }
+                            .o_label_data {
                                 flex-grow: 1;
                                 display: flex;
                                 flex-direction: column;
-                                justify-content: center;
-                                text-align: center;
-                                overflow: hidden;
+                                justify-content: flex-end;
                             }
-                            .bottom-content {
-                                flex-shrink: 0;
-                                text-align: center;
-                                overflow: hidden;
-                                margin-top: auto; /* Pushes the barcode to the bottom */
-                            }
-                            .product-name, .attribute-string, .internal-ref {
+                            .attribute-string, .internal-ref {
+                                font-size: 0.9em;
                                 overflow-wrap: break-word;
                             }
-                            .product-name { font-weight: bold; }
-                            .attribute-string { font-size: 0.9em; }
-                            .internal-ref { font-size: 0.85em; }
-                            .stock-label { font-size: 0.8em; color: #666; }
                             .barcode-container {
-                                margin: 0 auto;
-                                width: 100%;
-                                max-width: 90%; /* Ensure barcode doesn't touch the edges */
+                                margin: 1mm auto;
+                            }
+                            .stock-label {
+                                font-size: 0.8em;
+                                color: #666;
                             }
                         </style>
-                        <!-- Conditionally center the table for single-column layouts -->
-                        <table t-attf-style="width: {{ cols == 1 and '70%' or '100%' }}; height: 100%; border-collapse: collapse; border-spacing: 0; {{ cols == 1 and 'margin: 0 auto;' or '' }}">
-                            <tbody>
-                                <t t-foreach="range(rows)" t-as="row">
-                                    <tr style="page-break-inside: avoid;">
-                                        <t t-foreach="range(cols)" t-as="col">
-                                            <t t-set="label" t-value="labels[row * cols + col] if (row * cols + col) &lt; len(labels) else {}"/>
-                                            <!-- Label Cell -->
-                                            <td t-attf-style="width: {{ 100 / cols }}%; height: {{ 100 / rows }}%; padding: 1mm; vertical-align: top; page-break-inside: avoid; box-sizing: border-box;">
-                                                
-                                                <!-- Label Box: Applies dynamic styles -->
-                                                <div t-if="label.get('product_name')" class="label-box" t-attf-style="font-size: {{ label.get('font_size') }}; padding: {{ label.get('padding') }}; line-height: 1.1;">
+
+                        <div class="o_label_sheet">
+                            <table class="label_table">
+                                <t t-foreach="range(rows)" t-as="row_index">
+                                    <tr t-attf-style="height: {{ 100 / rows }}%;">
+                                        <t t-foreach="range(cols)" t-as="col_index">
+                                            <t t-set="label" t-value="page_labels[row_index * cols + col_index] if (row_index * cols + col_index) &lt; len(page_labels) else {}"/>
+                                            <td class="label_cell" t-attf-style="width: {{ 100 / cols }}%;">
+                                                <div t-if="label.get('product_name')" class="o_label_full" t-attf-style="font-size: {{ label.get('font_size') }};">
                                                     
-                                                    <!-- Top Content: Product Info -->
-                                                    <div class="top-content">
-                                                        <div class="product-name"><t t-esc="label['product_name']"/></div>
-                                                        <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
-                                                        <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
-                                                    </div>
+                                                    <div class="o_label_name"><t t-esc="label['product_name']"/></div>
+                                                    <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
+                                                    <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
                                                     
-                                                    <!-- Bottom Content: Barcode and Stock Info -->
-                                                    <div class="bottom-content">
+                                                    <div class="o_label_data">
                                                         <t t-if="label['barcode']">
                                                             <div class="barcode-container" t-attf-style="max-height: {{ label.get('barcode_max_height') }};">
-                                                                <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'margin': 0, 'humanreadable': show_barcode_digits, 'img_style': 'width: 100%; height: auto; max-height: 100%;'}"/>
+                                                                <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 400, 'height': 150, 'margin': 0, 'humanreadable': show_barcode_digits, 'img_style': 'width: 100%; height: auto; max-height: 100%;'}"/>
                                                             </div>
                                                         </t>
                                                         <div t-if="show_stock_label" class="stock-label">
@@ -82,14 +85,14 @@
                                         </t>
                                     </tr>
                                 </t>
-                            </tbody>
-                        </table>
+                            </table>
+                        </div>
                     </div>
                 </t>
             </t>
         </t>
     </template>
-    <!-- Report Action -->
+
     <record id="action_report_product_labels" model="ir.actions.report">
         <field name="name">Product Labels</field>
         <field name="model">product.label.wizard</field>

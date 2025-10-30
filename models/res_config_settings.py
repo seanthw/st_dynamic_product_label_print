@@ -33,6 +33,8 @@ class ResConfigSettings(models.TransientModel):
     label_margin_left = fields.Integer(string='Left Margin (mm)')
     label_margin_right = fields.Integer(string='Right Margin (mm)')
     paperformat_id = fields.Many2one('report.paperformat', string='Default Paper Format')
+    label_reference_width = fields.Float(string='Reference Label Width (mm)')
+    label_reference_height = fields.Float(string='Reference Label Height (mm)')
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
@@ -50,6 +52,8 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param('st_dynamic_product_label_print.label_margin_left', self.label_margin_left)
         ICP.set_param('st_dynamic_product_label_print.label_margin_right', self.label_margin_right)
         ICP.set_param('st_dynamic_product_label_print.paperformat_id', self.paperformat_id.id)
+        ICP.set_param('st_dynamic_product_label_print.label_reference_width', self.label_reference_width)
+        ICP.set_param('st_dynamic_product_label_print.label_reference_height', self.label_reference_height)
 
     @api.model
     def get_values(self):
@@ -73,5 +77,7 @@ class ResConfigSettings(models.TransientModel):
             label_margin_left=int(ICP.get_param('st_dynamic_product_label_print.label_margin_left')),
             label_margin_right=int(ICP.get_param('st_dynamic_product_label_print.label_margin_right')),
             paperformat_id=paperformat_id,
+            label_reference_width=float(ICP.get_param('st_dynamic_product_label_print.label_reference_width', 67.0)),
+            label_reference_height=float(ICP.get_param('st_dynamic_product_label_print.label_reference_height', 25.0)),
         )
         return res

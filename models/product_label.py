@@ -85,6 +85,8 @@ class ProductLabelWizard(models.TransientModel):
             "show_on_hand_qty": get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True",
             "show_stock_label": get_param("st_dynamic_product_label_print.label_show_stock_label") == "True",
             "show_attributes": get_param("st_dynamic_product_label_print.label_show_attributes") == "True",
+            "reference_width": float(get_param("st_dynamic_product_label_print.label_reference_width", 67.0)),
+            "reference_height": float(get_param("st_dynamic_product_label_print.label_reference_height", 25.0)),
         }
 
     def _validate_inputs(self):
@@ -103,19 +105,19 @@ class ProductLabelWizard(models.TransientModel):
         """Calculate a scaled font size based on rows and columns."""
         return base_font_size
 
-    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size):
+    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, reference_width, reference_height):
         """Calculate dynamic style properties based on label dimensions."""
         
         # 1. Calculate a reasonable font size
         # Heuristic: Base size adjusted by the smaller of the width/height ratios
         # This is a starting point and can be refined.
-        width_ratio = label_width / 70  # Assuming a "standard" label width of 70mm
-        height_ratio = label_height / 35 # Assuming a "standard" label height of 35mm
+        width_ratio = label_width / reference_width if reference_width else 1
+        height_ratio = label_height / reference_height if reference_height else 1
         font_size = base_font_size * min(width_ratio, height_ratio, 1.0) # Don't exceed base size
         font_size = max(font_size, 8) # Set a minimum font size of 8px
 
         # 2. Calculate barcode max height
-        barcode_max_height = label_height * 0.3 # Barcode shouldn't take more than 30% of the height
+        barcode_max_height = label_height * 0.25 # Barcode shouldn't take more than 25% of the height
 
         # 3. Calculate vertical padding (for vertical centering)
         # This is a simplified calculation. A more complex one would measure text height.
@@ -128,11 +130,11 @@ class ProductLabelWizard(models.TransientModel):
             'barcode_max_height': f"{barcode_max_height:.2f}mm",
         }
 
-    def _prepare_label_data(self, font_size, label_width, label_height):
+    def _prepare_label_data(self, font_size, label_width, label_height, reference_width, reference_height):
         """Prepare the list of dictionaries for each label to be printed."""
         label_data = []
         
-        dynamic_styles = self._calculate_dynamic_styles(label_width, label_height, font_size)
+        dynamic_styles = self._calculate_dynamic_styles(label_width, label_height, font_size, reference_width, reference_height)
 
         for product in self.product_ids:
             quantity = (
@@ -216,7 +218,13 @@ class ProductLabelWizard(models.TransientModel):
         label_width = (printable_width / self.cols) if self.cols > 0 else 0
         label_height = (printable_height / self.rows) if self.rows > 0 else 0
         
-        label_data = self._prepare_label_data(font_size, label_width, label_height)
+        label_data = self._prepare_label_data(
+            font_size, 
+            label_width, 
+            label_height, 
+            config["reference_width"], 
+            config["reference_height"]
+        )
         pages = self._prepare_pages(label_data)
 
         data = {
