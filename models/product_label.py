@@ -107,15 +107,23 @@ class ProductLabelWizard(models.TransientModel):
         """Calculate a scaled font size based on rows and columns."""
         return base_font_size
 
-    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, reference_width, reference_height):
+    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, reference_width, reference_height, cols):
         """Calculate dynamic style properties based on label dimensions."""
         
-        # 1. Calculate a reasonable font size
-        width_ratio = label_width / reference_width if reference_width else 1
-        height_ratio = label_height / reference_height if reference_height else 1
-        # Use a less aggressive scaling factor for font size
-        font_size = base_font_size * (min(width_ratio, height_ratio) * 0.7 + 0.3)
-        font_size = max(font_size, 11) # Set a minimum font size of 11px
+        # 1. Calculate a font size based on the number of columns
+        if cols <= 1:
+            scale_factor = 1.4
+        elif cols == 2:
+            scale_factor = 1.2
+        elif cols == 3:
+            scale_factor = 1.0
+        else: # 4 or more columns
+            scale_factor = 0.8
+        
+        font_size = base_font_size * scale_factor
+
+        # Clamp the font size to a reasonable range
+        font_size = max(10, min(font_size, 22)) # Min 10px, Max 22px
 
         # 2. Calculate barcode max height
         barcode_max_height = label_height * 0.15 # Barcode can take up to 15% of the height
@@ -129,11 +137,11 @@ class ProductLabelWizard(models.TransientModel):
             'barcode_max_height': f"{barcode_max_height:.2f}mm",
         }
 
-    def _prepare_label_data(self, font_size, label_width, label_height, reference_width, reference_height):
+    def _prepare_label_data(self, font_size, label_width, label_height, reference_width, reference_height, cols):
         """Prepare the list of dictionaries for each label to be printed."""
         label_data = []
         
-        dynamic_styles = self._calculate_dynamic_styles(label_width, label_height, font_size, reference_width, reference_height)
+        dynamic_styles = self._calculate_dynamic_styles(label_width, label_height, font_size, reference_width, reference_height, cols)
 
         for product in self.product_ids:
             quantity = (
@@ -188,7 +196,8 @@ class ProductLabelWizard(models.TransientModel):
             config["label_width"], 
             0, # Height is now controlled by CSS, this value is ignored.
             config["reference_width"], 
-            config["reference_height"]
+            config["reference_height"],
+            self.cols
         )
         
         # Add offsets for skipped cells

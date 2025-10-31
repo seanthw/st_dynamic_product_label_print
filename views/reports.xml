@@ -37,9 +37,13 @@
                         }
                         .o_label_name {
                             font-weight: bold;
+                            margin-bottom: 0.5mm;
                         }
-                        .o_label_data {
-                            margin-top: auto;
+                        .attribute-string {
+                            margin-bottom: 1mm;
+                        }
+                        .o_label_data > div[t-if="label['barcode']"] {
+                            margin-bottom: 1mm;
                         }
                     </style>
                     <div class="o_label_sheet">
