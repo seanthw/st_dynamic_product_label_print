@@ -21,8 +21,9 @@
                             <field name="custom_quantity" required="[('label_quantity', '=', 'custom')]" invisible="[('label_quantity', '!=', 'custom')]"/>
                         </group>
                         <group string="Sheet Layout">
-                            <field name="rows"/>
-                            <field name="cols"/>
+                            <field name="print_format" widget="radio"/>
+                            <field name="rows" readonly="print_format != 'other'" force_save="1"/>
+                            <field name="cols" readonly="print_format != 'other'" force_save="1"/>
                             <field name="start_row"/>
                             <field name="start_col"/>
                             <field name="skipped_pages"/>

@@ -23,16 +23,36 @@ class ProductLabelWizard(models.TransientModel):
         string="Paper Format",
         required=False,
     )
+    print_format = fields.Selection(
+        [
+            ("2x10", "2 x 10"),
+            ("3x10", "3 x 10"),
+            ("other", "Other"),
+        ],
+        string="Label Format",
+        default="3x10",
+        required=True,
+    )
     rows = fields.Integer(
         string="Rows",
         required=True,
-        default=lambda self: self.env['res.config.settings'].default_get(['label_rows']).get('label_rows', 10),
+        default=10,
     )
     cols = fields.Integer(
         string="Columns",
         required=True,
-        default=lambda self: self.env['res.config.settings'].default_get(['label_cols']).get('label_cols', 3),
+        default=3,
     )
+
+    @api.onchange('print_format')
+    def _onchange_print_format(self):
+        if self.print_format == '2x10':
+            self.rows = 10
+            self.cols = 2
+        elif self.print_format == '3x10':
+            self.rows = 10
+            self.cols = 3
+
     skipped_pages = fields.Integer(string="Skip Full Pages", default=0)
     start_row = fields.Integer(string="Start Row", default=1)
     start_col = fields.Integer(string="Start Column", default=1)
@@ -47,6 +67,13 @@ class ProductLabelWizard(models.TransientModel):
         if default_paperformat_id:
             res["paperformat_id"] = int(default_paperformat_id)
             
+        if 'print_format' in fields_list and res.get('print_format') == '3x10':
+            res['rows'] = 10
+            res['cols'] = 3
+        elif 'print_format' in fields_list and res.get('print_format') == '2x10':
+            res['rows'] = 10
+            res['cols'] = 2
+
         return res
 
     show_barcode_digits = fields.Boolean(

@@ -22,7 +22,6 @@
                             table-layout: fixed; /* Crucial for predictable column widths */
                         }
                         .label_cell {
-                            border: 1px solid #ddd; /* Optional: for visualizing the grid */
                             padding: 2mm;
                             box-sizing: border-box;
                             text-align: center;
