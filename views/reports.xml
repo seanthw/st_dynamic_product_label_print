@@ -18,12 +18,13 @@
                                 padding: 1mm;
                             }
                             .o_label_full {
-                                border: 1px solid #000;
                                 width: 100%;
                                 box-sizing: border-box;
                                 padding: 1.5mm;
                                 display: flex;
                                 flex-direction: column;
+                                align-items: center; /* Center horizontally */
+                                justify-content: center; /* Center vertically */
                             }
                             .o_label_name {
                                 font-weight: bold;
@@ -37,6 +38,7 @@
                                 text-align: center;
                             }
                             .o_label_data {
+                                width: 100%;
                                 flex-grow: 1;
                                 display: flex;
                                 flex-direction: column;
@@ -45,9 +47,11 @@
                                 text-align: center;
                             }
                             .barcode-container {
-                                margin: 2mm auto 0 auto;
-                                width: 60%; /* Scaled down barcode */
-                                text-align: center;
+                                width: 60%;
+                                height: 10mm; /* Fixed height for the barcode container */
+                                overflow: hidden; /* Hide any overflowing content */
+                                margin-left: auto;
+                                margin-right: auto;
                             }
                             .barcode-digits {
                                 white-space: nowrap;
@@ -79,12 +83,12 @@
                                                 <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
                                                 
                                                 <div class="o_label_data">
-                                                    <t t-if="label['barcode']">
+                                                    <div t-if="label['barcode']">
                                                         <div class="barcode-container">
-                                                            <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 300, 'height': 80, 'margin': 0, 'humanreadable': 0, 'img_style': 'width: 100%; height: auto;'}"/>
-                                                            <div t-if="show_barcode_digits" class="barcode-digits"><t t-esc="label['barcode']"/></div>
+                                                            <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 300, 'height': 80, 'margin': 0, 'humanreadable': 0, 'img_style': 'width: 100%; height: 100%;'}"/>
                                                         </div>
-                                                    </t>
+                                                        <div t-if="show_barcode_digits" class="barcode-digits"><t t-esc="label['barcode']"/></div>
+                                                    </div>
                                                     <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
                                                     <div t-if="show_stock_label" class="stock-label">
                                                         Label <t t-esc="label['sequence']"/> of <t t-esc="label['total_quantity']"/>
