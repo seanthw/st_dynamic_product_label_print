@@ -2,35 +2,60 @@
 <odoo>
     <template id="report_product_labels">
         <t t-call="web.html_container">
+            <t t-set="row_height" t-value="100 / rows if rows else 0"/>
+            <t t-set="col_width" t-value="100 / cols if cols else 0"/>
             <t t-foreach="range(page_numbers)" t-as="page_index">
                 <t t-call="web.basic_layout">
-                    <div class="o_label_sheet" t-attf-style="padding-top: {{ padding_top_dynamic }};">
-                        <table class="label_table">
-                            <t t-foreach="range(rows)" t-as="row_index">
-                                <tr>
-                                    <t t-foreach="range(cols)" t-as="col_index">
-                                        <t t-set="label_index" t-value="page_index * labels_per_page + row_index * cols + col_index"/>
-                                        <t t-set="label" t-value="labels[label_index] if label_index &lt; len(labels) else {}"/>
-                                        <td class="label_cell" t-attf-style="width: {{ label_width }}mm;">
-                                            <div t-if="label.get('product_name')" class="o_label_full" t-attf-style="font-size: {{ label.get('font_size') }};">
-                                                <div class="o_label_name"><t t-esc="label['product_name']"/></div>
-                                                <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
-                                                <div class="o_label_data">
-                                                    <div t-if="label['barcode']">
-                                                        <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'margin': 0, 'humanreadable': 1, 'img_style': 'max-width: 100%; height: auto;'}"/>
-                                                    </div>
-                                                    <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
-                                                    <div t-if="show_stock_label" class="stock-label">
-                                                        Label <t t-esc="label['sequence']"/> of <t t-esc="label['total_quantity']"/>
-                                                        <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </t>
-                                </tr>
-                            </t>
-                        </table>
+                    <style>
+                        .o_label_sheet {
+                            width: 100%;
+                            height: 100%;
+                            display: block;
+                            font-size: 0; /* To remove whitespace between inline-block elements */
+                        }
+                        .label_cell {
+                            display: inline-block;
+                            vertical-align: top;
+                            box-sizing: border-box;
+                            overflow: hidden;
+                            padding: 2mm; /* Inner padding for content */
+                            text-align: center;
+                        }
+                        .o_label_full {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            height: 100%;
+                            width: 100%;
+                        }
+                        .o_label_name {
+                            font-weight: bold;
+                        }
+                        .o_label_data {
+                            margin-top: auto;
+                        }
+                    </style>
+                    <div class="o_label_sheet">
+                        <t t-foreach="range(rows * cols)" t-as="cell_index">
+                            <t t-set="label_index" t-value="page_index * labels_per_page + cell_index"/>
+                            <t t-set="label" t-value="labels[label_index] if label_index &lt; len(labels) else {}"/>
+                            <div class="label_cell" t-attf-style="width: {{ col_width }}%; height: {{ row_height }}%;">
+                                <div t-if="label.get('product_name')" class="o_label_full" t-attf-style="font-size: {{ label.get('font_size') }};">
+                                    <div class="o_label_name"><t t-esc="label['product_name']"/></div>
+                                    <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
+                                    <div class="o_label_data">
+                                        <div t-if="label['barcode']">
+                                            <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 500, 'height': 80, 'margin': 0, 'humanreadable': 1, 'img_style': 'max-width: 100%; height: auto; max-height: 40px;'}"/>
+                                        </div>
+                                        <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
+                                        <div t-if="show_stock_label" class="stock-label">
+                                            Label <t t-esc="label['sequence']"/> of <t t-esc="label['total_quantity']"/>
+                                            <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
                     </div>
                 </t>
             </t>

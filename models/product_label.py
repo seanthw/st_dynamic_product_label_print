@@ -118,7 +118,7 @@ class ProductLabelWizard(models.TransientModel):
         font_size = max(font_size, 11) # Set a minimum font size of 11px
 
         # 2. Calculate barcode max height
-        barcode_max_height = label_height * 0.25 # Barcode can take up to 25% of the height
+        barcode_max_height = label_height * 0.15 # Barcode can take up to 15% of the height
 
         # 3. Calculate vertical padding
         padding_vertical = label_height * 0.05 # 5% top/bottom padding
@@ -170,23 +170,6 @@ class ProductLabelWizard(models.TransientModel):
             else:
                 raise UserError(_("You must either select a paper format in the wizard or set a default paper format in the settings."))
 
-        # Calculate available height and adjust label height if necessary
-        # Extra height per label for padding (in mm)
-        # 1mm padding top and bottom for the table cell = 2mm
-        extra_height_per_label = 2
-        available_height = paperformat.page_height - config["margin_top"] - config["margin_bottom"]
-        required_height = self.rows * (config["label_height"] + extra_height_per_label)
-        
-        if required_height > available_height:
-            label_height = (available_height / self.rows) - extra_height_per_label
-        else:
-            label_height = config["label_height"]
-
-        # Calculate dynamic top padding for vertical centering
-        total_labels_height = self.rows * (label_height + extra_height_per_label)
-        remaining_vertical_space = available_height - total_labels_height
-        padding_top_dynamic = max(0, remaining_vertical_space / 2) # Ensure non-negative padding
-
         # Create a temporary paper format with the dynamic margins.
         temp_paperformat = paperformat.copy({
             "name": f"Dynamic Label Paperformat - {self.id}",
@@ -199,11 +182,11 @@ class ProductLabelWizard(models.TransientModel):
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
         report.paperformat_id = temp_paperformat.id
 
-        # Prepare a single flat list of all labels
+        # Prepare a single flat list of all labels. Height is controlled by CSS.
         all_labels = self._prepare_label_data(
             config["font_size"], 
             config["label_width"], 
-            label_height, 
+            0, # Height is now controlled by CSS, this value is ignored.
             config["reference_width"], 
             config["reference_height"]
         )
@@ -227,8 +210,6 @@ class ProductLabelWizard(models.TransientModel):
             "rows": self.rows,
             "cols": self.cols,
             "label_width": config["label_width"],
-            "label_height": label_height,
-            "padding_top_dynamic": f"{padding_top_dynamic:.2f}mm",
             **config,
         }
 
