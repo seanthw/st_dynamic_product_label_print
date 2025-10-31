@@ -4,72 +4,7 @@
         <t t-call="web.html_container">
             <t t-foreach="range(page_numbers)" t-as="page_index">
                 <t t-call="web.basic_layout">
-                    <div class="page">
-                        <style>
-                            .label_table {
-                                border-spacing: 0;
-                                border-collapse: collapse;
-                                width: 100%;
-                            }
-                            .label_cell {
-                                text-align: center;
-                                overflow: hidden;
-                                box-sizing: border-box;
-                                padding: 1mm;
-                            }
-                            .o_label_full {
-                                width: 100%;
-                                box-sizing: border-box;
-                                padding: 1.5mm;
-                                display: flex;
-                                flex-direction: column;
-                                align-items: center; /* Center horizontally */
-                                justify-content: center; /* Center vertically */
-                            }
-                            .o_label_name {
-                                font-weight: bold;
-                                font-size: 1.1em;
-                                overflow-wrap: break-word;
-                                text-align: center;
-                            }
-                            .attribute-string {
-                                font-size: 0.9em;
-                                overflow-wrap: break-word;
-                                text-align: center;
-                            }
-                            .o_label_data {
-                                width: 100%;
-                                flex-grow: 1;
-                                display: flex;
-                                flex-direction: column;
-                                justify-content: center;
-                                align-items: center;
-                                text-align: center;
-                            }
-                            .barcode-container {
-                                width: 60%;
-                                height: 10mm; /* Fixed height for the barcode container */
-                                overflow: hidden; /* Hide any overflowing content */
-                                margin-left: auto;
-                                margin-right: auto;
-                            }
-                            .barcode-digits {
-                                white-space: nowrap;
-                                text-align: center;
-                            }
-                            .internal-ref {
-                                font-size: 1.0em;
-                                white-space: nowrap;
-                                margin-top: 1mm;
-                                text-align: center;
-                            }
-                            .stock-label {
-                                font-size: 0.8em;
-                                color: #666;
-                                margin-top: 2mm;
-                            }
-                        </style>
-
+                    <div class="o_label_sheet" t-attf-style="padding-top: {{ padding_top_dynamic }};">
                         <table class="label_table">
                             <t t-foreach="range(rows)" t-as="row_index">
                                 <tr>
@@ -77,17 +12,12 @@
                                         <t t-set="label_index" t-value="page_index * labels_per_page + row_index * cols + col_index"/>
                                         <t t-set="label" t-value="labels[label_index] if label_index &lt; len(labels) else {}"/>
                                         <td class="label_cell" t-attf-style="width: {{ label_width }}mm;">
-                                            <div t-if="label.get('product_name')" class="o_label_full" t-attf-style="font-size: {{ label.get('font_size') }}; height: {{ label_height }}mm;">
-                                                
+                                            <div t-if="label.get('product_name')" class="o_label_full" t-attf-style="font-size: {{ label.get('font_size') }};">
                                                 <div class="o_label_name"><t t-esc="label['product_name']"/></div>
                                                 <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
-                                                
                                                 <div class="o_label_data">
                                                     <div t-if="label['barcode']">
-                                                        <div class="barcode-container">
-                                                            <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 300, 'height': 80, 'margin': 0, 'humanreadable': 0, 'img_style': 'width: 100%; height: 100%;'}"/>
-                                                        </div>
-                                                        <div t-if="show_barcode_digits" class="barcode-digits"><t t-esc="label['barcode']"/></div>
+                                                        <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'margin': 0, 'humanreadable': 1, 'img_style': 'max-width: 100%; height: auto;'}"/>
                                                     </div>
                                                     <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
                                                     <div t-if="show_stock_label" class="stock-label">
@@ -95,7 +25,6 @@
                                                         <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </td>
                                     </t>
@@ -115,6 +44,7 @@
         <field name="report_name">st_dynamic_product_label_print.report_product_labels</field>
         <field name="report_file">st_dynamic_product_label_print.report_product_labels</field>
         <field name="binding_model_id" eval="False"/>
+        <field name="paperformat_id" ref="st_dynamic_product_label_print.paperformat_label"/>
         <field name="binding_type">report</field>
     </record>
 </odoo>

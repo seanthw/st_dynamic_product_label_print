@@ -11,11 +11,11 @@
     'depends': ['product', 'stock'],
     'data': [
         'security/ir.model.access.csv',
+        'views/paper_formats.xml',
         'views/product_label_views.xml',
         'views/res_config_settings_views.xml',
         'views/reports.xml',
         'views/product_template_views.xml',
-        'data/paper_formats.xml',
         'data/default_settings.xml',
     ],
     'post_init_hook': 'post_init_hook',

@@ -182,6 +182,11 @@ class ProductLabelWizard(models.TransientModel):
         else:
             label_height = config["label_height"]
 
+        # Calculate dynamic top padding for vertical centering
+        total_labels_height = self.rows * (label_height + extra_height_per_label)
+        remaining_vertical_space = available_height - total_labels_height
+        padding_top_dynamic = max(0, remaining_vertical_space / 2) # Ensure non-negative padding
+
         # Create a temporary paper format with the dynamic margins.
         temp_paperformat = paperformat.copy({
             "name": f"Dynamic Label Paperformat - {self.id}",
@@ -223,6 +228,7 @@ class ProductLabelWizard(models.TransientModel):
             "cols": self.cols,
             "label_width": config["label_width"],
             "label_height": label_height,
+            "padding_top_dynamic": f"{padding_top_dynamic:.2f}mm",
             **config,
         }
 
