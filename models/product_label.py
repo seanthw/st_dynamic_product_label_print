@@ -205,17 +205,8 @@ class ProductLabelWizard(models.TransientModel):
             else:
                 raise UserError(_("You must either select a paper format in the wizard or set a default paper format in the settings."))
 
-        # Create a temporary paper format with the dynamic margins.
-        temp_paperformat = paperformat.copy({
-            "name": f"Dynamic Label Paperformat - {self.id}",
-            "margin_top": config["margin_top"],
-            "margin_bottom": config["margin_bottom"],
-            "margin_left": config["margin_left"],
-            "margin_right": config["margin_right"],
-        })
-
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
-        report.paperformat_id = temp_paperformat.id
+        report.paperformat_id = paperformat.id
 
         # Prepare a single flat list of all labels. Height is controlled by CSS.
         all_labels = self._prepare_label_data(

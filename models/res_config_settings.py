@@ -71,7 +71,7 @@ class ResConfigSettings(models.TransientModel):
             paperformat_id=paperformat_id,
             label_width=float(ICP.get_param('st_dynamic_product_label_print.label_width', 68.63)),
             label_height=float(ICP.get_param('st_dynamic_product_label_print.label_height', 25.4)),
-            label_reference_width=float(ICP.get_param('st_dynamic_product_label_.label_reference_width', 70.0)),
+            label_reference_width=float(ICP.get_param('st_dynamic_product_label_print.label_reference_width', 70.0)),
             label_reference_height=float(ICP.get_param('st_dynamic_product_label_print.label_reference_height', 35.0)),
         )
         return res
