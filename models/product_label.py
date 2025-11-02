@@ -134,7 +134,7 @@ class ProductLabelWizard(models.TransientModel):
         """Calculate a scaled font size based on rows and columns."""
         return base_font_size
 
-    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, reference_width, reference_height, cols, product_name, attribute_string):
+    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, reference_width, reference_height, cols, product_name, attribute_string, show_attributes):
         """Calculate dynamic style properties based on label dimensions and text length."""
         
         # 1. Calculate a font size based on the number of columns
@@ -153,9 +153,16 @@ class ProductLabelWizard(models.TransientModel):
         if cols == 2 and self.rows == 10:
             font_size *= 0.9  # Reduce by 10%
 
-        # 2. Adjust font size based on the total length of the product name and attributes
-        total_len = len(product_name) + len(attribute_string)
-        base_char_count = 35  # A baseline character count that fits well
+        # 2. Adjust font size based on whether the attribute line will be shown
+        attribute_line_is_hidden = not (show_attributes and attribute_string)
+
+        if attribute_line_is_hidden:
+            total_len = len(product_name)
+            base_char_count = 45  # A larger baseline for when only the product name is shown
+        else:
+            total_len = len(product_name) + len(attribute_string)
+            base_char_count = 35  # A baseline for product + attributes
+
         if total_len > base_char_count:
             # Reduce font size proportionally for longer text
             length_scale_factor = base_char_count / total_len
@@ -195,7 +202,7 @@ class ProductLabelWizard(models.TransientModel):
 
             dynamic_styles = self._calculate_dynamic_styles(
                 label_width, label_height, font_size, reference_width, reference_height, cols,
-                product.name, attribute_string
+                product.name, attribute_string, self.show_attributes
             )
 
             for i in range(quantity):
