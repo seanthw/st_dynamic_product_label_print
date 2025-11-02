@@ -24,7 +24,6 @@
                             table-layout: fixed; /* Crucial for predictable column widths */
                         }
                         .label_cell {
-                            padding: 2mm;
                             box-sizing: border-box;
                             text-align: center;
                             overflow: hidden;
@@ -54,7 +53,7 @@
                                     <t t-foreach="range(cols)" t-as="col_index">
                                         <t t-set="label_index" t-value="page_index * labels_per_page + row_index * cols + col_index"/>
                                         <t t-set="label" t-value="labels[label_index] if label_index &lt; len(labels) else {}"/>
-                                        <td class="label_cell" t-attf-style="width: {{ col_width }}%;">
+                                        <td class="label_cell" t-attf-style="width: {{ col_width }}%; padding: {{ label.get('cell_padding', '1mm') }};">
                                             <div t-if="label.get('product_name')" class="o_label_full" t-attf-style="font-size: {{ label.get('font_size') }};">
                                                 <div class="o_label_name"><t t-esc="label['product_name']"/></div>
                                                 <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>

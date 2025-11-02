@@ -134,8 +134,8 @@ class ProductLabelWizard(models.TransientModel):
         """Calculate a scaled font size based on rows and columns."""
         return base_font_size
 
-    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, reference_width, reference_height, cols):
-        """Calculate dynamic style properties based on label dimensions."""
+    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, reference_width, reference_height, cols, product_name, attribute_string):
+        """Calculate dynamic style properties based on label dimensions and text length."""
         
         # 1. Calculate a font size based on the number of columns
         if cols <= 1:
@@ -149,26 +149,38 @@ class ProductLabelWizard(models.TransientModel):
         
         font_size = base_font_size * scale_factor
 
+        # Further reduce font size for 2x10 format to fit all rows
+        if cols == 2 and self.rows == 10:
+            font_size *= 0.9  # Reduce by 10%
+
+        # 2. Adjust font size based on the total length of the product name and attributes
+        total_len = len(product_name) + len(attribute_string)
+        base_char_count = 35  # A baseline character count that fits well
+        if total_len > base_char_count:
+            # Reduce font size proportionally for longer text
+            length_scale_factor = base_char_count / total_len
+            font_size *= length_scale_factor
+
         # Clamp the font size to a reasonable range
         font_size = max(10, min(font_size, 22)) # Min 10px, Max 22px
 
-        # 2. Calculate barcode max height
-        barcode_max_height = label_height * 0.15 # Barcode can take up to 15% of the height
+        # 3. Calculate barcode max height
+        barcode_max_height = label_height * 0.10 # Barcode can take up to 10% of the height
 
-        # 3. Calculate vertical padding
-        padding_vertical = label_height * 0.05 # 5% top/bottom padding
+        # 4. Calculate vertical padding
+        padding_vertical = label_height * 0.02 # 2% top/bottom padding
+        cell_padding = label_height * 0.01 # 1% for cell padding
         
         return {
             'font_size': f"{font_size:.2f}px",
             'padding': f"{padding_vertical:.2f}mm 1mm", # Vertical padding, fixed horizontal
             'barcode_max_height': f"{barcode_max_height:.2f}mm",
+            'cell_padding': f"{cell_padding:.2f}mm",
         }
 
     def _prepare_label_data(self, font_size, label_width, label_height, reference_width, reference_height, cols):
         """Prepare the list of dictionaries for each label to be printed."""
         label_data = []
-        
-        dynamic_styles = self._calculate_dynamic_styles(label_width, label_height, font_size, reference_width, reference_height, cols)
 
         for product in self.product_ids:
             quantity = (
@@ -180,6 +192,12 @@ class ProductLabelWizard(models.TransientModel):
             attribute_string = " ".join(
                 product.product_template_attribute_value_ids.mapped("name")
             )
+
+            dynamic_styles = self._calculate_dynamic_styles(
+                label_width, label_height, font_size, reference_width, reference_height, cols,
+                product.name, attribute_string
+            )
+
             for i in range(quantity):
                 label_info = {
                     "product_name": product.name,
