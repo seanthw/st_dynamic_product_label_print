@@ -97,6 +97,31 @@ class ProductLabelWizard(models.TransientModel):
         default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_attributes") == "True"
     )
 
+    def action_save_defaults(self):
+        """Save the current wizard settings as the new default values."""
+        self.ensure_one()
+        ICP = self.env['ir.config_parameter'].sudo()
+        
+        # Mapping of wizard fields to their corresponding system parameter keys
+        param_mapping = {
+            'show_barcode_digits': 'st_dynamic_product_label_print.label_show_barcode_digits',
+            'show_internal_ref': 'st_dynamic_product_label_print.label_show_internal_ref',
+            'show_on_hand_qty': 'st_dynamic_product_label_print.label_show_on_hand_qty',
+            'show_stock_label': 'st_dynamic_product_label_print.label_show_stock_label',
+            'show_attributes': 'st_dynamic_product_label_print.label_show_attributes',
+            'paperformat_id': 'st_dynamic_product_label_print.paperformat_id',
+        }
+        
+        for field_name, param_key in param_mapping.items():
+            value = self[field_name]
+            # For many2one fields, we store the ID
+            if isinstance(value, models.BaseModel):
+                value = value.id
+            
+            ICP.set_param(param_key, value)
+            
+        return {'type': 'ir.actions.act_window_close'}
+
     def _get_config_params(self):
         """Fetch all required configuration parameters at once."""
         get_param = self.env["ir.config_parameter"].sudo().get_param

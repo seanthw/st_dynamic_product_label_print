@@ -39,6 +39,9 @@
                             font-weight: bold;
                             margin-bottom: 0.5mm;
                         }
+                        .attribute-string, .internal-ref, .stock-label {
+                            font-size: 10px;
+                        }
                         .attribute-string {
                             margin-bottom: 1mm;
                         }
@@ -54,8 +57,8 @@
                                         <t t-set="label_index" t-value="page_index * labels_per_page + row_index * cols + col_index"/>
                                         <t t-set="label" t-value="labels[label_index] if label_index &lt; len(labels) else {}"/>
                                         <td class="label_cell" t-attf-style="width: {{ col_width }}%; padding: {{ label.get('cell_padding', '1mm') }};">
-                                            <div t-if="label.get('product_name')" class="o_label_full" t-attf-style="font-size: {{ label.get('font_size') }};">
-                                                <div class="o_label_name"><t t-esc="label['product_name']"/></div>
+                                            <div t-if="label.get('product_name')" class="o_label_full">
+                                                <div class="o_label_name" t-attf-style="font-size: {{ label.get('font_size') }};"> <t t-esc="label['product_name']"/></div>
                                                 <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
                                                 <div class="o_label_data">
                                                     <div t-if="label['barcode']">
