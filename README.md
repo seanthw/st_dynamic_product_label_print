@@ -24,6 +24,7 @@ The generated labels are formatted in a clean, two-column layout and include ess
     - Current Stock Level
     - Label sequence number (e.g., Label 1 of 10)
 - **Clean PDF Output:** Generates a professional, easy-to-read PDF document with labels arranged in a two-column grid.
+- **Save Default Settings:** Save your preferred label configuration directly from the print wizard to use as the default for future print jobs.
 
 ## Configuration
 
@@ -50,7 +51,7 @@ You can customize the following options:
 -   **Show Barcode Digits:** Check this to display the numerical digits below the barcode image.
 
 ### Styling
--   **Base Font Size (px):** Set the base font size for the label text.
+-   **Base Font Size (px):** Set the base font size for the product name on the label. Other details (like attributes, internal reference, and stock level) have a fixed, smaller font size for consistency.
 -   **Top/Bottom/Left/Right Margin (mm):** Adjust the margins of the page to ensure perfect alignment with your label sheets.
 
 ## Installation
@@ -84,6 +85,14 @@ This method is a convenient shortcut to print labels for all variants belonging 
 3.  Open the form view of the main product template.
 4.  Click the **Print Labels** button located in the button box at the top of the form.
 5.  The wizard will open, pre-filled with all variants of that product. Choose your quantity type and click **Print Labels**.
+
+### Saving Default Settings
+
+You can save the current settings in the **Print Labels** wizard as the new default for future use.
+
+1.  Open the **Print Labels** wizard using either of the methods described above.
+2.  Adjust the settings in the wizard to your desired defaults.
+3.  Click the **Save as Default** button. The next time you open the wizard, your saved settings will be loaded automatically.
 
 ## Author
 
