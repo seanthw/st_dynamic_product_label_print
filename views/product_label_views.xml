@@ -24,9 +24,9 @@
                             <field name="print_format" widget="radio"/>
                             <field name="rows" readonly="print_format != 'other'" force_save="1"/>
                             <field name="cols" readonly="print_format != 'other'" force_save="1"/>
-                            <field name="start_row"/>
+                            <!-- <field name="start_row"/>
                             <field name="start_col"/>
-                            <field name="skipped_pages"/>
+                            <field name="skipped_pages"/> -->
                         </group>
                     </group>
                     <group string="Label Content Options">
