@@ -9,10 +9,12 @@ def _set_internal_ref_default(env):
     ICP = env['ir.config_parameter'].sudo()
     ICP.set_param('st_dynamic_product_label_print.label_show_internal_ref', False)
 
-def post_init_hook(cr, registry):
+def post_init_hook(env):
+
     """
+
     The post-init hook.
+
     """
-    from odoo import api, SUPERUSER_ID
-    env = api.Environment(cr, SUPERUSER_ID, {})
+
     _set_internal_ref_default(env)
