@@ -5,8 +5,26 @@ from odoo import models, fields, api
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    label_rows = fields.Integer(string='Default Number of Rows', default=10)
-    label_cols = fields.Integer(string='Default Number of Columns', default=3)
+    label_print_format = fields.Selection(
+        [
+            ("2x10", "2 x 10"),
+            ("3x10", "3 x 10"),
+            ("other", "Other"),
+        ],
+        string="Default Label Format",
+        config_parameter="st_dynamic_product_label_print.print_format",
+        default="3x10",
+    )
+    label_rows = fields.Integer(
+        string='Default Number of Rows',
+        config_parameter="st_dynamic_product_label_print.rows",
+        default=10
+    )
+    label_cols = fields.Integer(
+        string='Default Number of Columns',
+        config_parameter="st_dynamic_product_label_print.cols",
+        default=3
+    )
     label_show_barcode_digits = fields.Boolean(string='Show Barcode Digits')
     label_show_internal_ref = fields.Boolean(
         string='Show Internal Reference',
@@ -34,10 +52,8 @@ class ResConfigSettings(models.TransientModel):
         super(ResConfigSettings, self).set_values()
         ICP = self.env['ir.config_parameter'].sudo()
         ICP.set_param('st_dynamic_product_label_print.label_show_barcode_digits', self.label_show_barcode_digits)
-        ICP.set_param('st_dynamic_product_label_print.label_show_internal_ref', self.label_show_internal_ref)
         ICP.set_param('st_dynamic_product_label_print.label_show_on_hand_qty', self.label_show_on_hand_qty)
         ICP.set_param('st_dynamic_product_label_print.label_show_stock_label', self.label_show_stock_label)
-        ICP.set_param('st_dynamic_product_label_print.label_show_attributes', self.label_show_attributes)
         ICP.set_param('st_dynamic_product_label_print.label_font_size', self.label_font_size)
         ICP.set_param('st_dynamic_product_label_print.label_margin_top', self.label_margin_top)
         ICP.set_param('st_dynamic_product_label_print.label_margin_bottom', self.label_margin_bottom)
@@ -59,10 +75,8 @@ class ResConfigSettings(models.TransientModel):
 
         res.update(
             label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
-            label_show_internal_ref=ICP.get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             label_show_stock_label=ICP.get_param('st_dynamic_product_label_print.label_show_stock_label') == 'True',
-            label_show_attributes=ICP.get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
             label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size')),
             label_margin_top=float(ICP.get_param('st_dynamic_product_label_print.label_margin_top')),
             label_margin_bottom=float(ICP.get_param('st_dynamic_product_label_print.label_margin_bottom')),

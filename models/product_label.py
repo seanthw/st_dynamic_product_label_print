@@ -67,12 +67,9 @@ class ProductLabelWizard(models.TransientModel):
         if default_paperformat_id:
             res["paperformat_id"] = int(default_paperformat_id)
             
-        if 'print_format' in fields_list and res.get('print_format') == '3x10':
-            res['rows'] = 10
-            res['cols'] = 3
-        elif 'print_format' in fields_list and res.get('print_format') == '2x10':
-            res['rows'] = 10
-            res['cols'] = 2
+        res['print_format'] = get_param('st_dynamic_product_label_print.print_format', '3x10')
+        res['rows'] = int(get_param('st_dynamic_product_label_print.rows', 10))
+        res['cols'] = int(get_param('st_dynamic_product_label_print.cols', 3))
 
         return res
 
@@ -104,6 +101,9 @@ class ProductLabelWizard(models.TransientModel):
         
         # Mapping of wizard fields to their corresponding system parameter keys
         param_mapping = {
+            'print_format': 'st_dynamic_product_label_print.print_format',
+            'rows': 'st_dynamic_product_label_print.rows',
+            'cols': 'st_dynamic_product_label_print.cols',
             'show_barcode_digits': 'st_dynamic_product_label_print.label_show_barcode_digits',
             'show_internal_ref': 'st_dynamic_product_label_print.label_show_internal_ref',
             'show_on_hand_qty': 'st_dynamic_product_label_print.label_show_on_hand_qty',
