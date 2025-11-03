@@ -129,12 +129,12 @@ class ProductLabelWizard(models.TransientModel):
         """Fetch all required configuration parameters at once."""
         get_param = self.env["ir.config_parameter"].sudo().get_param
         return {
-            "paperformat_id": int(get_param("st_dynamic_product_label_print.paperformat_id", 0)),
-            "margin_top": int(get_param("st_dynamic_product_label_print.label_margin_top", 10)),
-            "margin_bottom": int(get_param("st_dynamic_product_label_print.label_margin_bottom", 10)),
-            "margin_left": int(get_param("st_dynamic_product_label_print.label_margin_left", 10)),
-            "margin_right": int(get_param("st_dynamic_product_label_print.label_margin_right", 10)),
-            "font_size": int(get_param("st_dynamic_product_label_print.label_font_size", 16)),
+            "paperformat_id": int(float(get_param("st_dynamic_product_label_print.paperformat_id", 0))),
+            "margin_top": int(float(get_param("st_dynamic_product_label_print.label_margin_top", 10))),
+            "margin_bottom": int(float(get_param("st_dynamic_product_label_print.label_margin_bottom", 10))),
+            "margin_left": int(float(get_param("st_dynamic_product_label_print.label_margin_left", 10))),
+            "margin_right": int(float(get_param("st_dynamic_product_label_print.label_margin_right", 10))),
+            "font_size": int(float(get_param("st_dynamic_product_label_print.label_font_size", 16))),
             "label_width": float(get_param("st_dynamic_product_label_print.label_width", 70.0)),
             "label_height": float(get_param("st_dynamic_product_label_print.label_height", 35.0)),
             "show_barcode_digits": get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True",
