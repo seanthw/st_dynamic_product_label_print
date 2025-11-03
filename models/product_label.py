@@ -94,7 +94,7 @@ class ProductLabelWizard(models.TransientModel):
         default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_attributes") == "True"
     )
 
-    def action_save_defaults(self):
+    def _save_defaults(self):
         """Save the current wizard settings as the new default values."""
         self.ensure_one()
         ICP = self.env['ir.config_parameter'].sudo()
@@ -119,7 +119,10 @@ class ProductLabelWizard(models.TransientModel):
                 value = value.id
             
             ICP.set_param(param_key, value)
-            
+
+    def action_save_defaults(self):
+        """Save the current wizard settings as the new default values."""
+        self._save_defaults()
         return {'type': 'ir.actions.act_window_close'}
 
     def _get_config_params(self):
@@ -245,6 +248,7 @@ class ProductLabelWizard(models.TransientModel):
         return label_data
 
     def action_print_labels(self):
+        self._save_defaults()
         self._validate_inputs()
         config = self._get_config_params()
         

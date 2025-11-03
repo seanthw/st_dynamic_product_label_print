@@ -43,7 +43,6 @@
                 </sheet>
                 <footer>
                     <button name="action_print_labels" string="Print Labels" type="object" class="btn-primary"/>
-                    <button name="action_save_defaults" string="Save as Default" type="object" class="btn-secondary"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
