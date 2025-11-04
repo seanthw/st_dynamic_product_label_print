@@ -206,13 +206,13 @@ class ProductLabelWizard(models.TransientModel):
 
         # 4. Calculate vertical padding
         padding_vertical = label_height * 0.02 # 2% top/bottom padding
-        cell_padding = label_height * 0.01 # 1% for cell padding
+        # cell_padding = label_height * 0.01 # 1% for cell padding
         
         return {
             'font_size': f"{font_size:.2f}px",
             'padding': f"{padding_vertical:.2f}mm 1mm", # Vertical padding, fixed horizontal
             'barcode_max_height': f"{barcode_max_height:.2f}mm",
-            'cell_padding': f"{cell_padding:.2f}mm",
+            # 'cell_padding': f"{cell_padding:.2f}mm",
         }
 
     def _prepare_label_data(self, font_size, label_width, label_height, cols):

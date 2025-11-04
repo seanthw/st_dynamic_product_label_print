@@ -25,18 +25,17 @@
                             border-collapse: collapse;
                             table-layout: fixed; /* Crucial for predictable column widths */
                         }
+                        .o_label_full {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center; /* Keep horizontal centering */
+                            /* Removed height: 100%; and justify-content: center; */
+                        }
                         .label_cell {
                             box-sizing: border-box;
                             text-align: center;
                             overflow: hidden;
-                        }
-                        .o_label_full {
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            align-items: center;
-                            height: 100%;
-                            width: 100%;
+                            padding: 2mm 1mm; /* Fixed padding */
                         }
                         .o_label_name {
                             font-weight: bold;
@@ -59,7 +58,7 @@
                                     <t t-foreach="range(cols)" t-as="col_index">
                                         <t t-set="label_index" t-value="page_index * labels_per_page + row_index * cols + col_index"/>
                                         <t t-set="label" t-value="labels[label_index] if label_index &lt; len(labels) else {}"/>
-                                        <td class="label_cell" t-attf-style="width: {{ col_width }}%; padding: {{ label.get('cell_padding', '1mm') }};">
+                                        <td class="label_cell" t-attf-style="width: {{ col_width }}%;">
                                             <div t-if="label.get('product_name')" class="o_label_full">
                                                 <div class="o_label_name" t-attf-style="font-size: {{ label.get('font_size') }};"> <t t-esc="label['product_name']"/></div>
                                                 <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
