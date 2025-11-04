@@ -53,10 +53,6 @@ class ProductLabelWizard(models.TransientModel):
             self.rows = 10
             self.cols = 3
 
-    # skipped_pages = fields.Integer(string="Skip Full Pages", default=0)
-    # start_row = fields.Integer(string="Start Row", default=1)
-    # start_col = fields.Integer(string="Start Column", default=1)
-
     @api.model
     def default_get(self, fields_list):
         """Load default values from system configuration."""
@@ -125,8 +121,6 @@ class ProductLabelWizard(models.TransientModel):
             
             ICP.set_param(param_key, value)
 
-
-
     def _get_config_params(self):
         """Fetch all required configuration parameters at once."""
         get_param = self.env["ir.config_parameter"].sudo().get_param
@@ -144,8 +138,6 @@ class ProductLabelWizard(models.TransientModel):
             "show_on_hand_qty": get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True",
             "show_stock_label": get_param("st_dynamic_product_label_print.label_show_stock_label") == "True",
             "show_attributes": get_param("st_dynamic_product_label_print.label_show_attributes") == "True",
-            # "reference_width": float(get_param("st_dynamic_product_label_print.label_reference_width", 70.0)),
-            # "reference_height": float(get_param("st_dynamic_product_label_print.label_reference_height", 35.0)),
         }
 
     def _validate_inputs(self):
@@ -153,12 +145,6 @@ class ProductLabelWizard(models.TransientModel):
         self.ensure_one()
         if not self.product_ids:
             raise UserError(_("You must select at least one product."))
-        # if self.start_row < 1 or self.start_row > self.rows:
-        #     raise UserError(_("Start Row must be between 1 and %d.") % self.rows)
-        # if self.start_col < 1 or self.start_col > self.cols:
-        #     raise UserError(_("Start Column must be between 1 and %d.") % self.cols)
-        # if self.skipped_pages < 0:
-        #     raise UserError(_("Skipped Pages must be a positive number."))
 
     def _calculate_font_size(self, base_font_size):
         """Calculate a scaled font size based on rows and columns."""
@@ -280,10 +266,6 @@ class ProductLabelWizard(models.TransientModel):
             0, # Height is now controlled by CSS, this value is ignored.
             self.cols
         )
-        
-        # Add offsets for skipped cells
-        # offset = (self.start_row - 1) * self.cols + (self.start_col - 1)
-        # all_labels = ([{}] * offset) + all_labels
 
         # Calculate page numbers
         if self.rows <= 0 or self.cols <= 0:

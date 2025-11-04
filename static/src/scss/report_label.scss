@@ -1,0 +1,46 @@
+.o_label_sheet {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .label_table {
+        flex-grow: 1;
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .label_cell {
+        box-sizing: border-box;
+        text-align: center;
+        overflow: hidden;
+        padding: 2mm 1mm;
+    }
+
+    .o_label_full {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .o_label_name {
+        font-weight: bold;
+        margin-bottom: 0.5mm;
+        // No background or fixed height to address user feedback
+    }
+
+    .attribute-string, .internal-ref, .stock-label {
+        font-size: 10px;
+    }
+
+    .attribute-string {
+        margin-bottom: 1mm;
+    }
+
+    .o_label_data > div {
+        margin-bottom: 1mm;
+    }
+}

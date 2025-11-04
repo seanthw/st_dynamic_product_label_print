@@ -6,51 +6,6 @@
             <t t-set="col_width" t-value="100 / cols if cols else 0"/>
             <t t-foreach="range(page_numbers)" t-as="page_index">
                 <t t-call="web.basic_layout">
-                    <style>
-                        html, body {
-                            height: 100%;
-                            margin: 0;
-                            padding: 0;
-                        }
-                        .o_label_sheet {
-                            height: 100%;
-                            width: 100%;
-                            margin: 0 auto;
-                            display: flex;
-                            flex-direction: column;
-                        }
-                        .label_table {
-                            flex-grow: 1;
-                            width: 100%;
-                            border-collapse: collapse;
-                            table-layout: fixed; /* Crucial for predictable column widths */
-                        }
-                        .o_label_full {
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center; /* Keep horizontal centering */
-                            /* Removed height: 100%; and justify-content: center; */
-                        }
-                        .label_cell {
-                            box-sizing: border-box;
-                            text-align: center;
-                            overflow: hidden;
-                            padding: 2mm 1mm; /* Fixed padding */
-                        }
-                        .o_label_name {
-                            font-weight: bold;
-                            margin-bottom: 0.5mm;
-                        }
-                        .attribute-string, .internal-ref, .stock-label {
-                            font-size: 10px;
-                        }
-                        .attribute-string {
-                            margin-bottom: 1mm;
-                        }
-                        .o_label_data > div[t-if="label['barcode']"] {
-                            margin-bottom: 1mm;
-                        }
-                    </style>
                     <div class="o_label_sheet">
                         <table class="label_table">
                             <t t-foreach="range(rows)" t-as="row_index">
@@ -58,9 +13,9 @@
                                     <t t-foreach="range(cols)" t-as="col_index">
                                         <t t-set="label_index" t-value="page_index * labels_per_page + row_index * cols + col_index"/>
                                         <t t-set="label" t-value="labels[label_index] if label_index &lt; len(labels) else {}"/>
-                                        <td class="label_cell" t-attf-style="width: {{ col_width }}%;">
+                                        <td class="label_cell">
                                             <div t-if="label.get('product_name')" class="o_label_full">
-                                                <div class="o_label_name" t-attf-style="font-size: {{ label.get('font_size') }};"> <t t-esc="label['product_name']"/></div>
+                                                <div class="o_label_name" t-attf-style="font-size: {{ label.get('font_size') }};"><t t-esc="label['product_name']"/></div>
                                                 <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
                                                 <div class="o_label_data">
                                                     <div t-if="show_barcode and label['barcode']">

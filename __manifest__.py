@@ -18,6 +18,11 @@
         'views/product_template_views.xml',
         'data/default_settings.xml',
     ],
+    'assets': {
+        'web.report_assets_common': [
+            'st_dynamic_product_label_print/static/src/scss/report_label.scss',
+        ],
+    },
 
     'installable': True,
     'application': True,
