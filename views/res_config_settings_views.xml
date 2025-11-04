@@ -70,6 +70,10 @@
                                         <label for="label_show_attributes"/>
                                     </div>
                                     <div>
+                                        <field name="label_show_barcode" class="o_light_label"/>
+                                        <label for="label_show_barcode"/>
+                                    </div>
+                                    <div>
                                         <field name="label_show_barcode_digits" class="o_light_label"/>
                                         <label for="label_show_barcode_digits"/>
                                     </div>

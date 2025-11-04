@@ -73,6 +73,10 @@ class ProductLabelWizard(models.TransientModel):
 
         return res
 
+    show_barcode = fields.Boolean(
+        string="Show Barcode Image",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_barcode") == "True"
+    )
     show_barcode_digits = fields.Boolean(
         string="Show Barcode Digits",
         default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True"
@@ -104,6 +108,7 @@ class ProductLabelWizard(models.TransientModel):
             'print_format': 'st_dynamic_product_label_print.print_format',
             'rows': 'st_dynamic_product_label_print.rows',
             'cols': 'st_dynamic_product_label_print.cols',
+            'show_barcode': 'st_dynamic_product_label_print.label_show_barcode',
             'show_barcode_digits': 'st_dynamic_product_label_print.label_show_barcode_digits',
             'show_internal_ref': 'st_dynamic_product_label_print.label_show_internal_ref',
             'show_on_hand_qty': 'st_dynamic_product_label_print.label_show_on_hand_qty',
@@ -299,6 +304,7 @@ class ProductLabelWizard(models.TransientModel):
         }
 
         data.update({
+            "show_barcode": self.show_barcode,
             "show_barcode_digits": self.show_barcode_digits,
             "show_internal_ref": self.show_internal_ref,
             "show_on_hand_qty": self.show_on_hand_qty,

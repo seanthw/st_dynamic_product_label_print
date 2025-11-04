@@ -25,7 +25,16 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="st_dynamic_product_label_print.cols",
         default=3
     )
-    label_show_barcode_digits = fields.Boolean(string='Show Barcode Digits')
+    label_show_barcode = fields.Boolean(
+        string='Show Barcode Image',
+        config_parameter="st_dynamic_product_label_print.label_show_barcode",
+        default=True,
+    )
+    label_show_barcode_digits = fields.Boolean(
+        string='Show Barcode Digits',
+        config_parameter="st_dynamic_product_label_print.label_show_barcode_digits",
+        default=True,
+    )
     label_show_internal_ref = fields.Boolean(
         string='Show Internal Reference',
         config_parameter="st_dynamic_product_label_print.label_show_internal_ref",
@@ -51,7 +60,7 @@ class ResConfigSettings(models.TransientModel):
     def set_values(self):
         super(ResConfigSettings, self).set_values()
         ICP = self.env['ir.config_parameter'].sudo()
-        ICP.set_param('st_dynamic_product_label_print.label_show_barcode_digits', self.label_show_barcode_digits)
+
         ICP.set_param('st_dynamic_product_label_print.label_show_on_hand_qty', self.label_show_on_hand_qty)
         ICP.set_param('st_dynamic_product_label_print.label_show_stock_label', self.label_show_stock_label)
         ICP.set_param('st_dynamic_product_label_print.label_font_size', self.label_font_size)
@@ -74,7 +83,7 @@ class ResConfigSettings(models.TransientModel):
         paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
 
         res.update(
-            label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
+
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             label_show_stock_label=ICP.get_param('st_dynamic_product_label_print.label_show_stock_label') == 'True',
             label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size')),
