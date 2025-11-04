@@ -18,7 +18,7 @@
         'views/product_template_views.xml',
         'data/default_settings.xml',
     ],
-    'post_init_hook': 'post_init_hook',
+
     'installable': True,
     'application': True,
     'auto_install': False,

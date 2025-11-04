@@ -120,10 +120,7 @@ class ProductLabelWizard(models.TransientModel):
             
             ICP.set_param(param_key, value)
 
-    def action_save_defaults(self):
-        """Save the current wizard settings as the new default values."""
-        self._save_defaults()
-        return {'type': 'ir.actions.act_window_close'}
+
 
     def _get_config_params(self):
         """Fetch all required configuration parameters at once."""
