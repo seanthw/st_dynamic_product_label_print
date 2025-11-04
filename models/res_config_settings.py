@@ -45,8 +45,8 @@ class ResConfigSettings(models.TransientModel):
     paperformat_id = fields.Many2one('report.paperformat', string='Default Paper Format')
     label_width = fields.Float(string='Label Width (mm)')
     label_height = fields.Float(string='Label Height (mm)')
-    label_reference_width = fields.Float(string='Reference Label Width (mm)')
-    label_reference_height = fields.Float(string='Reference Label Height (mm)')
+    # label_reference_width = fields.Float(string='Reference Label Width (mm)')
+    # label_reference_height = fields.Float(string='Reference Label Height (mm)')
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
@@ -62,8 +62,8 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param('st_dynamic_product_label_print.paperformat_id', self.paperformat_id.id)
         ICP.set_param('st_dynamic_product_label_print.label_width', self.label_width)
         ICP.set_param('st_dynamic_product_label_print.label_height', self.label_height)
-        ICP.set_param('st_dynamic_product_label_print.label_reference_width', self.label_reference_width)
-        ICP.set_param('st_dynamic_product_label_print.label_reference_height', self.label_reference_height)
+        # ICP.set_param('st_dynamic_product_label_print.label_reference_width', self.label_reference_width)
+        # ICP.set_param('st_dynamic_product_label_print.label_reference_height', self.label_reference_height)
 
     @api.model
     def get_values(self):
@@ -85,7 +85,7 @@ class ResConfigSettings(models.TransientModel):
             paperformat_id=paperformat_id,
             label_width=float(ICP.get_param('st_dynamic_product_label_print.label_width', 68.63)),
             label_height=float(ICP.get_param('st_dynamic_product_label_print.label_height', 25.4)),
-            label_reference_width=float(ICP.get_param('st_dynamic_product_label_.label_reference_width', 70.0)),
-            label_reference_height=float(ICP.get_param('st_dynamic_product_label_print.label_reference_height', 35.0)),
+            # label_reference_width=float(ICP.get_param('st_dynamic_product_label_.label_reference_width', 70.0)),
+            # label_reference_height=float(ICP.get_param('st_dynamic_product_label_print.label_reference_height', 35.0)),
         )
         return res

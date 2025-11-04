@@ -142,8 +142,8 @@ class ProductLabelWizard(models.TransientModel):
             "show_on_hand_qty": get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True",
             "show_stock_label": get_param("st_dynamic_product_label_print.label_show_stock_label") == "True",
             "show_attributes": get_param("st_dynamic_product_label_print.label_show_attributes") == "True",
-            "reference_width": float(get_param("st_dynamic_product_label_print.label_reference_width", 70.0)),
-            "reference_height": float(get_param("st_dynamic_product_label_print.label_reference_height", 35.0)),
+            # "reference_width": float(get_param("st_dynamic_product_label_print.label_reference_width", 70.0)),
+            # "reference_height": float(get_param("st_dynamic_product_label_print.label_reference_height", 35.0)),
         }
 
     def _validate_inputs(self):
@@ -162,7 +162,7 @@ class ProductLabelWizard(models.TransientModel):
         """Calculate a scaled font size based on rows and columns."""
         return base_font_size
 
-    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, reference_width, reference_height, cols, product_name, attribute_string, show_attributes):
+    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, cols, product_name, attribute_string, show_attributes):
         """Calculate dynamic style properties based on label dimensions and text length."""
         
         # 1. Calculate a font size based on the number of columns
@@ -213,7 +213,7 @@ class ProductLabelWizard(models.TransientModel):
             'cell_padding': f"{cell_padding:.2f}mm",
         }
 
-    def _prepare_label_data(self, font_size, label_width, label_height, reference_width, reference_height, cols):
+    def _prepare_label_data(self, font_size, label_width, label_height, cols):
         """Prepare the list of dictionaries for each label to be printed."""
         label_data = []
 
@@ -229,7 +229,7 @@ class ProductLabelWizard(models.TransientModel):
             )
 
             dynamic_styles = self._calculate_dynamic_styles(
-                label_width, label_height, font_size, reference_width, reference_height, cols,
+                label_width, label_height, font_size, cols,
                 product.name, attribute_string, self.show_attributes
             )
 
@@ -276,8 +276,6 @@ class ProductLabelWizard(models.TransientModel):
             config["font_size"], 
             config["label_width"], 
             0, # Height is now controlled by CSS, this value is ignored.
-            config["reference_width"], 
-            config["reference_height"],
             self.cols
         )
         
