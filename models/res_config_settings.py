@@ -85,7 +85,7 @@ class ResConfigSettings(models.TransientModel):
             'st_dynamic_product_label_print.label_show_internal_ref': 'False',
             'st_dynamic_product_label_print.label_show_on_hand_qty': 'True',
             'st_dynamic_product_label_print.label_show_attributes': 'True',
-            'st_dynamic_product_label_print.label_font_size': '14',
+            'st_dynamic_product_label_print.label_font_size': '10',
             'st_dynamic_product_label_print.label_margin_top': '12.7',
             'st_dynamic_product_label_print.label_margin_bottom': '12.7',
             'st_dynamic_product_label_print.label_margin_left': '5',
