@@ -144,7 +144,7 @@ class ProductLabelWizard(models.TransientModel):
             "margin_bottom": float(get_param("st_dynamic_product_label_print.label_margin_bottom", 12.7)),
             "margin_left": float(get_param("st_dynamic_product_label_print.label_margin_left", 5.0)),
             "margin_right": float(get_param("st_dynamic_product_label_print.label_margin_right", 5.0)),
-            "font_size": float(get_param("st_dynamic_product_label_print.label_font_size", 14.0)),
+            "font_size": float(get_param("st_dynamic_product_label_print.label_font_size", 10.0)),
             "label_width": float(get_param("st_dynamic_product_label_print.label_width", 66.675)),
             "label_height": float(get_param("st_dynamic_product_label_print.label_height", 25.4)),
             "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 0.0)),
@@ -252,6 +252,8 @@ class ProductLabelWizard(models.TransientModel):
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
         report.paperformat_id = temp_paperformat.id
 
+        printable_height = paperformat.page_height - config["margin_top"] - config["margin_bottom"]
+
         # Prepare a single flat list of all labels.
         all_labels = self._prepare_label_data(
             config["font_size"], 
@@ -265,6 +267,7 @@ class ProductLabelWizard(models.TransientModel):
 
         data = {
             "pages": pages,
+            "printable_height": printable_height,
             "rows": self.rows,
             "cols": self.cols,
             "vertical_spacing": self.vertical_spacing,
