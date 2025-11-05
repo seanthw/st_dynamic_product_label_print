@@ -16,7 +16,7 @@
                                                     <t t-set="label" t-value="labels[label_index]"/>
                                                     <div t-attf-style="margin-bottom: {{ vertical_spacing if row &lt; (rows - 1) else 0 }}mm;">
                                                         <div t-attf-style="padding: 5px; height: {{ label_height }}mm; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: space-between; font-size: {{ label.get('font_size', 8) }}px; line-height: 1.2;">
-                                                            <div> <!-- Top Content Wrapper -->
+                                                            <div style="margin-bottom: 2mm;"> <!-- Top Content Wrapper -->
                                                                 <div class="text-center" t-attf-style="font-weight: bold; font-size: {{ label.get('font_size', 8) }}px;">
                                                                     <t t-esc="label['product_name']"/>
                                                                 </div>

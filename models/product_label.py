@@ -147,7 +147,7 @@ class ProductLabelWizard(models.TransientModel):
             "font_size": float(get_param("st_dynamic_product_label_print.label_font_size", 10.0)),
             "label_width": float(get_param("st_dynamic_product_label_print.label_width", 66.675)),
             "label_height": float(get_param("st_dynamic_product_label_print.label_height", 25.4)),
-            "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 2.0)),
+            "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 4.0)),
             "horizontal_spacing": float(get_param("st_dynamic_product_label_print.label_horizontal_spacing", 3.0)),
             "show_barcode_digits": get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True",
             "show_internal_ref": get_param("st_dynamic_product_label_print.label_show_internal_ref") == "True",

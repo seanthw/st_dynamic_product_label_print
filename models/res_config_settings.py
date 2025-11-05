@@ -78,7 +78,7 @@ class ResConfigSettings(models.TransientModel):
             'st_dynamic_product_label_print.cols': '3',
             'st_dynamic_product_label_print.label_width': '66.675',
             'st_dynamic_product_label_print.label_height': '25.4',
-            'vertical_spacing': '2.0',
+            'vertical_spacing': '4.0',
             'st_dynamic_product_label_print.label_horizontal_spacing': '3.0',
             'st_dynamic_product_label_print.label_show_barcode': 'True',
             'st_dynamic_product_label_print.label_show_barcode_digits': 'True',
