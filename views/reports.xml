@@ -3,11 +3,11 @@
     <template id="report_product_labels">
         <t t-call="web.html_container">
             <t t-set="body_style" t-value="'margin: 0; padding: 0;'"/>
-            <body>
+            <body t-att-style="body_style">
                 <main>
                     <t t-foreach="range(page_numbers)" t-as="page_index">
-                        <!-- The padding here creates the real, reliable margins -->
-                        <div class="o_label_sheet" style="padding: 12.7mm 5mm;">
+                        <!-- The padding is now dynamic and syncs with the paper format margins -->
+                        <div class="o_label_sheet" t-attf-style="padding: {{margin_top}}mm {{margin_right}}mm {{margin_bottom}}mm {{margin_left}}mm;">
                             <table class="label_table" t-attf-style="border-spacing: {{horizontal_spacing}}mm {{vertical_spacing}}mm;">
                                 <t t-foreach="range(rows)" t-as="row_index">
                                     <tr>

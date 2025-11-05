@@ -139,16 +139,16 @@ class ProductLabelWizard(models.TransientModel):
         """Fetch all required configuration parameters at once."""
         get_param = self.env["ir.config_parameter"].sudo().get_param
         return {
-            "paperformat_id": int(float(get_param("st_dynamic_product_label_print.paperformat_id", 0))),
-            "margin_top": int(float(get_param("st_dynamic_product_label_print.label_margin_top", 10))),
-            "margin_bottom": int(float(get_param("st_dynamic_product_label_print.label_margin_bottom", 10))),
-            "margin_left": int(float(get_param("st_dynamic_product_label_print.label_margin_left", 10))),
-            "margin_right": int(float(get_param("st_dynamic_product_label_print.label_margin_right", 10))),
-            "font_size": int(float(get_param("st_dynamic_product_label_print.label_font_size", 16))),
-            "label_width": float(get_param("st_dynamic_product_label_print.label_width", 70.0)),
-            "label_height": float(get_param("st_dynamic_product_label_print.label_height", 35.0)),
-            "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 1.0)),
-            "horizontal_spacing": float(get_param("st_dynamic_product_label_print.label_horizontal_spacing", 1.0)),
+            "paperformat_id": int(get_param("st_dynamic_product_label_print.paperformat_id", 0)),
+            "margin_top": float(get_param("st_dynamic_product_label_print.label_margin_top", 12.7)),
+            "margin_bottom": float(get_param("st_dynamic_product_label_print.label_margin_bottom", 12.7)),
+            "margin_left": float(get_param("st_dynamic_product_label_print.label_margin_left", 5.0)),
+            "margin_right": float(get_param("st_dynamic_product_label_print.label_margin_right", 5.0)),
+            "font_size": float(get_param("st_dynamic_product_label_print.label_font_size", 14.0)),
+            "label_width": float(get_param("st_dynamic_product_label_print.label_width", 66.675)),
+            "label_height": float(get_param("st_dynamic_product_label_print.label_height", 25.4)),
+            "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 0.0)),
+            "horizontal_spacing": float(get_param("st_dynamic_product_label_print.label_horizontal_spacing", 3.0)),
             "show_barcode_digits": get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True",
             "show_internal_ref": get_param("st_dynamic_product_label_print.label_show_internal_ref") == "True",
             "show_on_hand_qty": get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True",
@@ -162,59 +162,32 @@ class ProductLabelWizard(models.TransientModel):
         if not self.product_ids:
             raise UserError(_("You must select at least one product."))
 
-    def _calculate_font_size(self, base_font_size):
-        """Calculate a scaled font size based on rows and columns."""
-        return base_font_size
-
-    def _calculate_dynamic_styles(self, label_width, label_height, base_font_size, cols, product_name, attribute_string, show_attributes):
-        """Calculate dynamic style properties based on label dimensions and text length."""
+    def _calculate_dynamic_styles(self, base_font_size, product_name, attribute_string, show_attributes):
+        """
+        Calculate a simplified, more robust font size.
+        The font size is only scaled down if the text is too long, making it predictable.
+        """
+        font_size = base_font_size
         
-        # 1. Calculate a font size based on the number of columns
-        if cols <= 1:
-            scale_factor = 1.4
-        elif cols == 2:
-            scale_factor = 1.2
-        elif cols == 3:
-            scale_factor = 1.0
-        else: # 4 or more columns
-            scale_factor = 0.8
-        
-        font_size = base_font_size * scale_factor
+        # Determine the total length of the text that will be displayed.
+        total_len = len(product_name)
+        if show_attributes and attribute_string:
+            total_len += len(attribute_string)
 
-        # Further reduce font size for 2x10 format to fit all rows
-        if cols == 2 and self.rows == 10:
-            font_size *= 0.9  # Reduce by 10%
+        # Define a simple character limit threshold.
+        # This can be adjusted, but 45 is a reasonable baseline for a typical label.
+        char_limit = 45
 
-        # 2. Adjust font size based on whether the attribute line will be shown
-        attribute_line_is_hidden = not (show_attributes and attribute_string)
+        # If the text is longer than the limit, scale the font size down.
+        if total_len > char_limit:
+            scale_factor = char_limit / total_len
+            font_size *= scale_factor
 
-        if attribute_line_is_hidden:
-            total_len = len(product_name)
-            base_char_count = 45  # A larger baseline for when only the product name is shown
-        else:
-            total_len = len(product_name) + len(attribute_string)
-            base_char_count = 35  # A baseline for product + attributes
+        # Clamp the font size to a reasonable minimum to ensure readability.
+        final_font_size = max(10, font_size) # Min 10px
 
-        if total_len > base_char_count:
-            # Reduce font size proportionally for longer text
-            length_scale_factor = base_char_count / total_len
-            font_size *= length_scale_factor
-
-        # Clamp the font size to a reasonable range
-        font_size = max(10, min(font_size, 22)) # Min 10px, Max 22px
-
-        # 3. Calculate barcode max height
-        barcode_max_height = label_height * 0.10 # Barcode can take up to 10% of the height
-
-        # 4. Calculate vertical padding
-        padding_vertical = label_height * 0.02 # 2% top/bottom padding
-        # cell_padding = label_height * 0.01 # 1% for cell padding
-        
         return {
-            'font_size': f"{font_size:.2f}px",
-            'padding': f"{padding_vertical:.2f}mm 1mm", # Vertical padding, fixed horizontal
-            'barcode_max_height': f"{barcode_max_height:.2f}mm",
-            # 'cell_padding': f"{cell_padding:.2f}mm",
+            'font_size': f"{final_font_size:.2f}px",
         }
 
     def _prepare_label_data(self, font_size, label_width, label_height, cols):
@@ -233,8 +206,7 @@ class ProductLabelWizard(models.TransientModel):
             )
 
             dynamic_styles = self._calculate_dynamic_styles(
-                label_width, label_height, font_size, cols,
-                product.name, attribute_string, self.show_attributes
+                font_size, product.name, attribute_string, self.show_attributes
             )
 
             for i in range(quantity):
@@ -258,10 +230,15 @@ class ProductLabelWizard(models.TransientModel):
         
         paperformat = self.paperformat_id
         if not paperformat:
-            if config.get("paperformat_id"):
-                paperformat = self.env["report.paperformat"].browse(config["paperformat_id"])
+            paperformat_id = config.get("paperformat_id")
+            if paperformat_id:
+                paperformat = self.env["report.paperformat"].browse(paperformat_id)
             else:
-                raise UserError(_("You must either select a paper format in the wizard or set a default paper format in the settings."))
+                # Fallback to the default paper format if no specific one is set
+                paperformat = self.env.ref("st_dynamic_product_label_print.paperformat_label", raise_if_not_found=False)
+
+        if not paperformat:
+            raise UserError(_("You must either select a paper format in the wizard or set a default paper format in the settings."))
 
         # Create a temporary paper format with the dynamic margins.
         temp_paperformat = paperformat.copy({
@@ -275,11 +252,11 @@ class ProductLabelWizard(models.TransientModel):
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
         report.paperformat_id = temp_paperformat.id
 
-        # Prepare a single flat list of all labels. Height is controlled by CSS.
+        # Prepare a single flat list of all labels.
         all_labels = self._prepare_label_data(
             config["font_size"], 
             config["label_width"], 
-            0, # Height is now controlled by CSS, this value is ignored.
+            config["label_height"],
             self.cols
         )
 
@@ -300,6 +277,7 @@ class ProductLabelWizard(models.TransientModel):
             "vertical_spacing": self.vertical_spacing,
             "horizontal_spacing": self.horizontal_spacing,
             "label_width": config["label_width"],
+            "label_height": config["label_height"],
             **config,
         }
 

@@ -1,54 +1,81 @@
 /*
-    Core layout rules for the label sheet, exactly mimicking Odoo's standard, robust approach.
-    This avoids unreliable Flexbox and uses the negative margin trick for true centering.
+    ================================
+    Label Sheet & Grid Layout
+    ================================
 */
-
 .o_label_sheet {
-    width: 215.9mm;      /* US Letter width */
-    height: 279.4mm;     /* US Letter height */
+    width: 215.9mm;
+    height: 279.4mm;
     overflow: hidden;
     position: relative;
-    margin-left: -5mm;   /* Negative margin to cancel paper format margin */
-    margin-right: -5mm;  /* Negative margin to cancel paper format margin */
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 .label_table {
     border-collapse: separate;
     table-layout: fixed;
-    width: 100%;
-    height: 100%;
 }
 
 .label_cell {
     box-sizing: border-box;
     overflow: hidden;
     padding: 1mm;
+    text-align: center; /* Center all text horizontally */
 }
 
+/*
+    ================================
+    Individual Label Layout (Table-Cell Strategy)
+    ================================
+    This strategy is highly compatible with wkhtmltopdf.
+    - .o_label_full is a "table" that fills the cell.
+    - The content blocks are "table-rows" and "table-cells".
+    - vertical-align is used to push content to the top, middle, and bottom.
+*/
 .o_label_full {
-    /* Use padding to create vertical space instead of flexbox */
-    padding-top: 1mm;
-    padding-bottom: 1mm;
     height: 100%;
     width: 100%;
-    display: block; /* Ensure it behaves as a simple block */
+    display: table; /* Make the container behave like a table */
 }
 
+.o_label_name, .attribute-string {
+    display: table-row; /* This group will be a row */
+    height: 1px; /* Minimal height, will be pushed by padding */
+}
+
+.o_label_data {
+    display: table-row; /* The main data block is a row */
+    vertical-align: middle; /* Vertically center the barcode and other data */
+}
+
+.internal-ref, .stock-label {
+    display: block; /* Ensure these are block-level within the cell */
+    padding-top: 2mm; /* Add padding to push them down from the barcode */
+}
+
+
+/*
+    ================================
+    Content Styling
+    ================================
+*/
 .o_label_name {
     font-weight: bold;
-    margin-bottom: 1mm;
+    padding-bottom: 2mm; /* Add space below the name */
 }
 
 .attribute-string {
     font-size: 10px;
-    margin-bottom: 1mm;
+    padding-bottom: 2mm; /* Add space below attributes */
 }
 
-.internal-ref, .stock-label {
-    font-size: 10px;
-}
-
-.o_label_data > div {
-    margin-bottom: 1mm;
+.o_label_data img {
+    display: block;
+    margin: 0 auto;
+    max-width: 95%;
+    height: auto;
 }
