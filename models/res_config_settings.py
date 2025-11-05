@@ -65,6 +65,38 @@ class ResConfigSettings(models.TransientModel):
         default=3.0
     )
 
+    @api.model
+    def set_default_parameters(self):
+        """
+        Set the default values for the module's system parameters.
+        This is called from a data file to ensure upgrade-safe initialization.
+        """
+        ICP = self.env['ir.config_parameter'].sudo()
+        
+        default_params = {
+            'st_dynamic_product_label_print.rows': '10',
+            'st_dynamic_product_label_print.cols': '3',
+            'st_dynamic_product_label_print.label_width': '66.675',
+            'st_dynamic_product_label_print.label_height': '25.4',
+            'st_dynamic_product_label_print.label_vertical_spacing': '0.0',
+            'st_dynamic_product_label_print.label_horizontal_spacing': '3.0',
+            'st_dynamic_product_label_print.label_show_barcode': 'True',
+            'st_dynamic_product_label_print.label_show_barcode_digits': 'True',
+            'st_dynamic_product_label_print.label_show_internal_ref': 'False',
+            'st_dynamic_product_label_print.label_show_on_hand_qty': 'True',
+            'st_dynamic_product_label_print.label_show_attributes': 'True',
+            'st_dynamic_product_label_print.label_font_size': '14',
+            'st_dynamic_product_label_print.label_margin_top': '12.7',
+            'st_dynamic_product_label_print.label_margin_bottom': '12.7',
+            'st_dynamic_product_label_print.label_margin_left': '5',
+            'st_dynamic_product_label_print.label_margin_right': '5',
+        }
+        
+        for key, value in default_params.items():
+            if not ICP.get_param(key):
+                ICP.set_param(key, value)
+
+
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
