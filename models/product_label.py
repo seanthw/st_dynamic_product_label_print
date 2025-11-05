@@ -254,14 +254,13 @@ class ProductLabelWizard(models.TransientModel):
 
         printable_height = paperformat.page_height - config["margin_top"] - config["margin_bottom"]
         total_vertical_spacing = (self.rows - 1) * self.vertical_spacing
-        available_label_height = printable_height - total_vertical_spacing
-        label_height = available_label_height / self.rows if self.rows > 0 else 0
+        cell_height = (printable_height - total_vertical_spacing) / self.rows if self.rows > 0 else 0
 
         # Prepare a single flat list of all labels.
         all_labels = self._prepare_label_data(
             config["font_size"],
             config["label_width"],
-            label_height,
+            cell_height, # Pass cell_height instead of label_height
             self.cols
         )
 
@@ -271,7 +270,7 @@ class ProductLabelWizard(models.TransientModel):
         data = {
             "pages": pages,
             "printable_height": printable_height,
-            "label_height": label_height,
+            "cell_height": cell_height,
             "rows": self.rows,
             "cols": self.cols,
             "vertical_spacing": self.vertical_spacing,
