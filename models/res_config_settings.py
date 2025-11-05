@@ -54,6 +54,16 @@ class ResConfigSettings(models.TransientModel):
     paperformat_id = fields.Many2one('report.paperformat', string='Default Paper Format')
     label_width = fields.Float(string='Label Width (mm)')
     label_height = fields.Float(string='Label Height (mm)')
+    label_vertical_spacing = fields.Float(
+        string='Vertical Spacing (mm)',
+        config_parameter='st_dynamic_product_label_print.label_vertical_spacing',
+        default=0.0
+    )
+    label_horizontal_spacing = fields.Float(
+        string='Horizontal Spacing (mm)',
+        config_parameter='st_dynamic_product_label_print.label_horizontal_spacing',
+        default=3.0
+    )
 
 
     def set_values(self):

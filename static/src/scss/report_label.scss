@@ -4,19 +4,20 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    margin: auto; /* Center the sheet horizontally */
 
     .label_table {
         flex-grow: 1;
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate; /* Use separate borders for spacing */
         table-layout: fixed;
     }
 
     .label_cell {
         box-sizing: border-box;
         text-align: center;
-        overflow: hidden;
-        padding: 2mm 1mm;
+        overflow: hidden; /* Prevent content from expanding the cell */
+        padding: 1mm; /* Minimal padding */
     }
 
     .o_label_full {
@@ -24,6 +25,8 @@
         flex-direction: column;
         align-items: center;
         width: 100%;
+        height: 100%; /* Ensure content fills the cell */
+        justify-content: space-around; /* Evenly space content vertically */
     }
 
     .o_label_name {

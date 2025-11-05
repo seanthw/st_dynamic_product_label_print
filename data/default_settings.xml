@@ -3,12 +3,28 @@
     <data noupdate="1">
         <!-- Default Label Print Settings -->
         <record id="default_label_rows" model="ir.config_parameter">
-            <field name="key">st_dynamic_product_label_print.label_rows</field>
+            <field name="key">st_dynamic_product_label_print.rows</field>
             <field name="value">10</field>
         </record>
         <record id="default_label_cols" model="ir.config_parameter">
-            <field name="key">st_dynamic_product_label_print.label_cols</field>
+            <field name="key">st_dynamic_product_label_print.cols</field>
             <field name="value">3</field>
+        </record>
+        <record id="default_label_width" model="ir.config_parameter">
+            <field name="key">st_dynamic_product_label_print.label_width</field>
+            <field name="value">66.675</field>
+        </record>
+        <record id="default_label_height" model="ir.config_parameter">
+            <field name="key">st_dynamic_product_label_print.label_height</field>
+            <field name="value">25.4</field>
+        </record>
+        <record id="default_label_vertical_spacing" model="ir.config_parameter">
+            <field name="key">st_dynamic_product_label_print.label_vertical_spacing</field>
+            <field name="value">0.0</field>
+        </record>
+        <record id="default_label_horizontal_spacing" model="ir.config_parameter">
+            <field name="key">st_dynamic_product_label_print.label_horizontal_spacing</field>
+            <field name="value">3.0</field>
         </record>
         <record id="default_label_show_barcode_digits" model="ir.config_parameter">
             <field name="key">st_dynamic_product_label_print.label_show_barcode_digits</field>

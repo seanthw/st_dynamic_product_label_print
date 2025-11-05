@@ -24,6 +24,8 @@
                             <field name="print_format" widget="radio"/>
                             <field name="rows" readonly="print_format != 'other'" force_save="1"/>
                             <field name="cols" readonly="print_format != 'other'" force_save="1"/>
+                            <field name="vertical_spacing"/>
+                            <field name="horizontal_spacing"/>
 
                         </group>
                     </group>

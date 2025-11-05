@@ -43,6 +43,16 @@ class ProductLabelWizard(models.TransientModel):
         required=True,
         default=3,
     )
+    vertical_spacing = fields.Float(
+        string="Vertical Spacing (mm)",
+        required=True,
+        default=0.0,
+    )
+    horizontal_spacing = fields.Float(
+        string="Horizontal Spacing (mm)",
+        required=True,
+        default=3.0,
+    )
 
     @api.onchange('print_format')
     def _onchange_print_format(self):
@@ -66,6 +76,8 @@ class ProductLabelWizard(models.TransientModel):
         res['print_format'] = get_param('st_dynamic_product_label_print.print_format', '3x10')
         res['rows'] = int(get_param('st_dynamic_product_label_print.rows', 10))
         res['cols'] = int(get_param('st_dynamic_product_label_print.cols', 3))
+        res['vertical_spacing'] = float(get_param('st_dynamic_product_label_print.label_vertical_spacing', 1.0))
+        res['horizontal_spacing'] = float(get_param('st_dynamic_product_label_print.label_horizontal_spacing', 1.0))
 
         return res
 
@@ -104,6 +116,8 @@ class ProductLabelWizard(models.TransientModel):
             'print_format': 'st_dynamic_product_label_print.print_format',
             'rows': 'st_dynamic_product_label_print.rows',
             'cols': 'st_dynamic_product_label_print.cols',
+            'vertical_spacing': 'st_dynamic_product_label_print.label_vertical_spacing',
+            'horizontal_spacing': 'st_dynamic_product_label_print.label_horizontal_spacing',
             'show_barcode': 'st_dynamic_product_label_print.label_show_barcode',
             'show_barcode_digits': 'st_dynamic_product_label_print.label_show_barcode_digits',
             'show_internal_ref': 'st_dynamic_product_label_print.label_show_internal_ref',
@@ -133,6 +147,8 @@ class ProductLabelWizard(models.TransientModel):
             "font_size": int(float(get_param("st_dynamic_product_label_print.label_font_size", 16))),
             "label_width": float(get_param("st_dynamic_product_label_print.label_width", 70.0)),
             "label_height": float(get_param("st_dynamic_product_label_print.label_height", 35.0)),
+            "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 1.0)),
+            "horizontal_spacing": float(get_param("st_dynamic_product_label_print.label_horizontal_spacing", 1.0)),
             "show_barcode_digits": get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True",
             "show_internal_ref": get_param("st_dynamic_product_label_print.label_show_internal_ref") == "True",
             "show_on_hand_qty": get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True",
@@ -281,6 +297,8 @@ class ProductLabelWizard(models.TransientModel):
             "labels_per_page": labels_per_page,
             "rows": self.rows,
             "cols": self.cols,
+            "vertical_spacing": self.vertical_spacing,
+            "horizontal_spacing": self.horizontal_spacing,
             "label_width": config["label_width"],
             **config,
         }

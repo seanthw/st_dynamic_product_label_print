@@ -37,6 +37,14 @@
                                         <label for="label_height" class="col-lg-3 o_light_label"/>
                                         <field name="label_height"/>
                                     </div>
+                                    <div class="row mt16">
+                                        <label for="label_vertical_spacing" class="col-lg-3 o_light_label"/>
+                                        <field name="label_vertical_spacing"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="label_horizontal_spacing" class="col-lg-3 o_light_label"/>
+                                        <field name="label_horizontal_spacing"/>
+                                    </div>
                                     <div class="row">
                                         <label for="paperformat_id" class="col-lg-3 o_light_label"/>
                                         <field name="paperformat_id"/>
