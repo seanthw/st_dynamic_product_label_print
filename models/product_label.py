@@ -147,7 +147,7 @@ class ProductLabelWizard(models.TransientModel):
             "font_size": float(get_param("st_dynamic_product_label_print.label_font_size", 10.0)),
             "label_width": float(get_param("st_dynamic_product_label_print.label_width", 66.675)),
             "label_height": float(get_param("st_dynamic_product_label_print.label_height", 25.4)),
-            "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 0.0)),
+            "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 2.0)),
             "horizontal_spacing": float(get_param("st_dynamic_product_label_print.label_horizontal_spacing", 3.0)),
             "show_barcode_digits": get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True",
             "show_internal_ref": get_param("st_dynamic_product_label_print.label_show_internal_ref") == "True",
@@ -176,7 +176,7 @@ class ProductLabelWizard(models.TransientModel):
 
         # Define a simple character limit threshold.
         # This can be adjusted, but 45 is a reasonable baseline for a typical label.
-        char_limit = 45
+        char_limit = 30
 
         # If the text is longer than the limit, scale the font size down.
         if total_len > char_limit:
@@ -184,7 +184,7 @@ class ProductLabelWizard(models.TransientModel):
             font_size *= scale_factor
 
         # Clamp the font size to a reasonable minimum to ensure readability.
-        final_font_size = max(10, font_size) # Min 10px
+        final_font_size = max(8, font_size) # Min 8px
 
         return {
             'font_size': f"{final_font_size:.2f}px",
