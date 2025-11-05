@@ -2,42 +2,60 @@
 <odoo>
     <template id="report_product_labels">
         <t t-call="web.html_container">
-            <t t-set="body_style" t-value="'margin: 0; padding: 0;'"/>
-            <body t-att-style="body_style">
-                <main>
-                    <t t-foreach="range(page_numbers)" t-as="page_index">
-                        <!-- The padding is now dynamic and syncs with the paper format margins -->
-                        <div class="o_label_sheet" t-attf-style="padding: {{margin_top}}mm {{margin_right}}mm {{margin_bottom}}mm {{margin_left}}mm;">
-                            <table class="label_table" t-attf-style="border-spacing: {{horizontal_spacing}}mm {{vertical_spacing}}mm;">
-                                <t t-foreach="range(rows)" t-as="row_index">
+            <t t-foreach="pages" t-as="labels">
+                <t t-call="web.basic_layout">
+                    <div class="page" t-attf-style="height: 280mm; display: flex; flex-direction: column; justify-content: center;">
+                        <t t-set="label_index" t-value="0"/>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tbody>
+                                <t t-foreach="range(rows)" t-as="row">
                                     <tr>
-                                        <t t-foreach="range(cols)" t-as="col_index">
-                                            <t t-set="label_index" t-value="page_index * labels_per_page + row_index * cols + col_index"/>
-                                            <t t-set="label" t-value="labels[label_index] if label_index &lt; len(labels) else {}"/>
-                                            <td class="label_cell" t-attf-style="width: {{label_width}}mm; height: {{label_height}}mm;">
-                                                <div t-if="label.get('product_name')" class="o_label_full">
-                                                    <div class="o_label_name" t-attf-style="font-size: {{ label.get('font_size') }};"><t t-esc="label['product_name']"/></div>
-                                                    <div t-if="show_attributes and label['attribute_string']" class="attribute-string"><t t-esc="label['attribute_string']"/></div>
-                                                    <div class="o_label_data">
-                                                        <div t-if="show_barcode and label['barcode']">
-                                                            <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 500, 'height': 80, 'margin': 0, 'humanreadable': 1 if show_barcode_digits else 0, 'img_style': 'max-width: 100%; height: auto; max-height: 40px;'}"/>
-                                                        </div>
-                                                        <div t-if="show_internal_ref" class="internal-ref">Code: <t t-esc="label['default_code']"/></div>
-                                                        <div t-if="show_stock_label" class="stock-label">
-                                                            Label <t t-esc="label['sequence']"/> of <t t-esc="label['total_quantity']"/>
-                                                            <span t-if="show_on_hand_qty"> | Stock: <t t-esc="label['on_hand_qty']"/></span>
+                                        <t t-foreach="range(cols)" t-as="col">
+                                            <td t-attf-style="width: {{ 100 / cols }}%; height: {{ 280 / rows }}mm; padding: 1mm; vertical-align: top;">
+                                                <t t-if="label_index &lt; len(labels)">
+                                                    <t t-set="label" t-value="labels[label_index]"/>
+                                                    <div t-attf-style="border: 1px solid black; padding: 5px; height: 100%; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: center; font-size: {{ label.get('font_size', 12) }}px; line-height: 1.2;">
+                                                        <div class="text-center">
+                                                            <div style="font-weight: bold;">
+                                                                <t t-esc="label['product_name']"/>
+                                                            </div>
+                                                            <div t-if="show_attributes and label['attribute_string']" style="font-size: 0.8em;">
+                                                                <t t-esc="label['attribute_string']"/>
+                                                            </div>
+                                                            <div t-if="show_internal_ref" style="font-size: 0.8em;">Code:
+                                                                <t t-esc="label['default_code']"/>
+                                                            </div>
+                                                            <t t-if="label['barcode']">
+                                                                <div style="padding-top: 5px; padding-bottom: 5px;">
+                                                                    <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'img_style': 'width:100%;height:40px;'}"/>
+                                                                </div>
+                                                                <div t-if="show_barcode_digits" style="font-size: 0.9em;">
+                                                                    <t t-esc="label['barcode']"/>
+                                                                </div>
+                                                            </t>
+                                                            <div style="font-size: 0.8em; color: #666;">
+                                                                Label
+                                                                <t t-esc="label['sequence']"/>
+                                                                of
+                                                                <t t-esc="label['total_quantity']"/>
+                                                                <span t-if="show_on_hand_qty">
+                                                                    | Stock:
+                                                                    <t t-esc="label['on_hand_qty']"/>
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                    <t t-set="label_index" t-value="label_index + 1"/>
+                                                </t>
                                             </td>
                                         </t>
                                     </tr>
                                 </t>
-                            </table>
-                        </div>
-                    </t>
-                </main>
-            </body>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
         </t>
     </template>
 

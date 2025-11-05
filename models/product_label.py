@@ -260,18 +260,11 @@ class ProductLabelWizard(models.TransientModel):
             self.cols
         )
 
-        # Calculate page numbers
-        if self.rows <= 0 or self.cols <= 0:
-            raise UserError(_("The number of rows and columns must be greater than zero."))
         labels_per_page = self.rows * self.cols
-        if not labels_per_page:
-            raise UserError(_("Please configure the number of rows and columns for the labels."))
-        page_numbers = math.ceil(len(all_labels) / labels_per_page)
+        pages = [all_labels[i:i + labels_per_page] for i in range(0, len(all_labels), labels_per_page)]
 
         data = {
-            "labels": all_labels,
-            "page_numbers": int(page_numbers),
-            "labels_per_page": labels_per_page,
+            "pages": pages,
             "rows": self.rows,
             "cols": self.cols,
             "vertical_spacing": self.vertical_spacing,
