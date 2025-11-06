@@ -45,6 +45,10 @@
                                                                     <t t-esc="label['on_hand_qty']"/>
                                                                 </span>
                                                             </div>
+                                                            <div t-if="not show_stock_label and show_on_hand_qty" class="text-center" style="font-size: 0.8em; color: #666;">
+                                                                Stock:
+                                                                <t t-esc="label['on_hand_qty']"/>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <t t-set="label_index" t-value="label_index + 1"/>

@@ -40,11 +40,20 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="st_dynamic_product_label_print.label_show_internal_ref",
         default=False,
     )
-    label_show_on_hand_qty = fields.Boolean(string='Show On-Hand Quantity')
-    label_show_stock_label = fields.Boolean(string='Show Stock Label')
+    label_show_on_hand_qty = fields.Boolean(
+        string='Show On-Hand Quantity',
+        config_parameter="st_dynamic_product_label_print.label_show_on_hand_qty",
+        default=True,
+    )
+    label_show_stock_label = fields.Boolean(
+        string='Show Stock Label',
+        config_parameter="st_dynamic_product_label_print.label_show_stock_label",
+        default=True,
+    )
     label_show_attributes = fields.Boolean(
         "Show Attributes",
         config_parameter="st_dynamic_product_label_print.label_show_attributes",
+        default=True,
     )
     label_font_size = fields.Integer(string='Base Font Size (px)')
     label_margin_top = fields.Integer(string='Top Margin (mm)')
