@@ -201,8 +201,9 @@ class ProductLabelWizard(models.TransientModel):
                 else self.custom_quantity
             )
             quantity = max(int(quantity), 0)
-            attribute_string = " ".join(
-                product.product_template_attribute_value_ids.mapped("name")
+            attribute_string = ", ".join(
+                f"{attr_value.attribute_line_id.attribute_id.name}: {attr_value.name}"
+                for attr_value in product.product_template_attribute_value_ids
             )
 
             dynamic_styles = self._calculate_dynamic_styles(
@@ -311,8 +312,7 @@ class ProductTemplate(models.Model):
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
-
-    def action_print_labels(self):
+    def action_print_product_labels(self):
         return {
             "type": "ir.actions.act_window",
             "name": "Print Product Labels",
