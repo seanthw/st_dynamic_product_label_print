@@ -229,17 +229,9 @@ class ProductLabelWizard(models.TransientModel):
         self._validate_inputs()
         config = self._get_config_params()
         
-        paperformat = self.paperformat_id
+        paperformat = self.paperformat_id or self.env.ref("st_dynamic_product_label_print.paperformat_label", raise_if_not_found=False)
         if not paperformat:
-            paperformat_id = config.get("paperformat_id")
-            if paperformat_id:
-                paperformat = self.env["report.paperformat"].browse(paperformat_id)
-            else:
-                # Fallback to the default paper format if no specific one is set
-                paperformat = self.env.ref("st_dynamic_product_label_print.paperformat_label", raise_if_not_found=False)
-
-        if not paperformat:
-            raise UserError(_("You must either select a paper format in the wizard or set a default paper format in the settings."))
+            raise UserError(_("Paper format is not configured. Please set a default in settings or select one in the wizard."))
 
         # Create a temporary paper format with the dynamic margins.
         temp_paperformat = paperformat.copy({
@@ -253,41 +245,28 @@ class ProductLabelWizard(models.TransientModel):
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
         report.paperformat_id = temp_paperformat.id
 
-        printable_height = paperformat.page_height - config["margin_top"] - config["margin_bottom"]
-        total_vertical_spacing = (self.rows - 1) * self.vertical_spacing
-        cell_height = (printable_height - total_vertical_spacing) / self.rows if self.rows > 0 else 0
-
-        # Prepare a single flat list of all labels.
+        # Prepare a single flat list of all labels. The template will handle all layout logic.
         all_labels = self._prepare_label_data(
             config["font_size"],
-            config["label_width"],
-            cell_height, # Pass cell_height instead of label_height
+            0, # Width is now 100% handled by the template
+            0, # Height is now 100% handled by the template
             self.cols
         )
 
-        labels_per_page = self.rows * self.cols
-        pages = [all_labels[i:i + labels_per_page] for i in range(0, len(all_labels), labels_per_page)]
-
         data = {
-            "pages": pages,
-            "printable_height": printable_height,
-            "cell_height": cell_height,
+            "labels": all_labels,
             "rows": self.rows,
             "cols": self.cols,
             "vertical_spacing": self.vertical_spacing,
             "horizontal_spacing": self.horizontal_spacing,
-            "label_width": config["label_width"],
             **config,
-        }
-
-        data.update({
             "show_barcode": self.show_barcode,
             "show_barcode_digits": self.show_barcode_digits,
             "show_internal_ref": self.show_internal_ref,
             "show_on_hand_qty": self.show_on_hand_qty,
             "show_stock_label": self.show_stock_label,
             "show_attributes": self.show_attributes,
-        })
+        }
 
         report_action = report.report_action(None, data=data)
         report_action.update({"close_on_report_download": True})
