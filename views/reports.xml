@@ -18,7 +18,7 @@
                         <!-- 
                             Label container with percentage-based height to fill the page.
                         -->
-                        <div t-attf-style="width: {{ 100 / cols }}%; height: {{ 100 / rows }}%; float: left; page-break-inside: avoid; box-sizing: border-box; padding-right: {{ 0 if (count + 1) % cols == 0 else horizontal_spacing }}mm; padding-bottom: {{ vertical_spacing }}mm;">
+                        <div t-attf-style="width: {{ 100 / cols }}%; height: {{ 100 / rows }}%; float: left; page-break-inside: avoid; box-sizing: border-box; padding-right: {{ 0 if (count + 1) % cols == 0 else horizontal_spacing }}mm; padding-bottom: {{ 0 if (count // cols) == (rows - 1) else vertical_spacing }}mm;">
                             <!-- 
                                 The key change is here: `justify-content: space-between` distributes the content vertically.
                             -->
