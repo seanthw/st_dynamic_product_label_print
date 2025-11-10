@@ -11,7 +11,6 @@
     'depends': ['product', 'stock'],
     'data': [
         'security/ir.model.access.csv',
-        'views/paper_formats.xml',
         'report/paperformats.xml',
         'views/product_label_views.xml',
         'views/res_config_settings_views.xml',
