@@ -176,7 +176,7 @@ class ProductLabelWizard(models.TransientModel):
 
         # Define a simple character limit threshold.
         # This can be adjusted, but 45 is a reasonable baseline for a typical label.
-        char_limit = 30
+        char_limit = 999
 
         # If the text is longer than the limit, scale the font size down.
         if total_len > char_limit:
@@ -184,10 +184,10 @@ class ProductLabelWizard(models.TransientModel):
             font_size *= scale_factor
 
         # Clamp the font size to a reasonable minimum to ensure readability.
-        final_font_size = max(8, font_size) # Min 8px
+        final_font_size = font_size
 
         return {
-            'font_size': f"{final_font_size:.2f}px",
+            'font_size': final_font_size,
         }
 
     def _prepare_label_data(self, font_size, label_width, label_height, cols):
