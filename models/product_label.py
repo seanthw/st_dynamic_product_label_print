@@ -138,17 +138,32 @@ class ProductLabelWizard(models.TransientModel):
     def _get_config_params(self):
         """Fetch all required configuration parameters at once."""
         get_param = self.env["ir.config_parameter"].sudo().get_param
+        
+        def get_int(key, default):
+            val = get_param(key, default)
+            try:
+                return int(val)
+            except (ValueError, TypeError):
+                return default
+
+        def get_float(key, default):
+            val = get_param(key, default)
+            try:
+                return float(val)
+            except (ValueError, TypeError):
+                return default
+
         return {
-            "paperformat_id": int(get_param("st_dynamic_product_label_print.paperformat_id", 0)),
-            "margin_top": float(get_param("st_dynamic_product_label_print.label_margin_top", 12.7)),
-            "margin_bottom": float(get_param("st_dynamic_product_label_print.label_margin_bottom", 12.7)),
-            "margin_left": float(get_param("st_dynamic_product_label_print.label_margin_left", 5.0)),
-            "margin_right": float(get_param("st_dynamic_product_label_print.label_margin_right", 5.0)),
-            "font_size": float(get_param("st_dynamic_product_label_print.label_font_size", 10.0)),
-            "label_width": float(get_param("st_dynamic_product_label_print.label_width", 66.675)),
-            "label_height": float(get_param("st_dynamic_product_label_print.label_height", 25.4)),
-            "vertical_spacing": float(get_param("st_dynamic_product_label_print.label_vertical_spacing", 4.0)),
-            "horizontal_spacing": float(get_param("st_dynamic_product_label_print.label_horizontal_spacing", 3.0)),
+            "paperformat_id": get_int("st_dynamic_product_label_print.paperformat_id", 0),
+            "margin_top": get_float("st_dynamic_product_label_print.label_margin_top", 12.7),
+            "margin_bottom": get_float("st_dynamic_product_label_print.label_margin_bottom", 12.7),
+            "margin_left": get_float("st_dynamic_product_label_print.label_margin_left", 5.0),
+            "margin_right": get_float("st_dynamic_product_label_print.label_margin_right", 5.0),
+            "font_size": get_float("st_dynamic_product_label_print.label_font_size", 10.0),
+            "label_width": get_float("st_dynamic_product_label_print.label_width", 66.675),
+            "label_height": get_float("st_dynamic_product_label_print.label_height", 25.4),
+            "vertical_spacing": get_float("st_dynamic_product_label_print.label_vertical_spacing", 4.0),
+            "horizontal_spacing": get_float("st_dynamic_product_label_print.label_horizontal_spacing", 3.0),
             "show_barcode_digits": get_param("st_dynamic_product_label_print.label_show_barcode_digits") == "True",
             "show_internal_ref": get_param("st_dynamic_product_label_print.label_show_internal_ref") == "True",
             "show_on_hand_qty": get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True",
