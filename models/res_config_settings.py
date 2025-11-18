@@ -56,6 +56,9 @@ class ResConfigSettings(models.TransientModel):
         default=True,
     )
     label_font_size = fields.Integer(string='Base Font Size (px)')
+    label_product_name_font_size = fields.Integer(string='Product Name Font Size (px)')
+    label_product_attribute_font_size = fields.Integer(string='Attribute Font Size (px)')
+    label_barcode_height = fields.Integer(string='Barcode Height (px)')
     label_margin_top = fields.Integer(string='Top Margin (mm)')
     label_margin_bottom = fields.Integer(string='Bottom Margin (mm)')
     label_margin_left = fields.Integer(string='Left Margin (mm)')
@@ -95,6 +98,9 @@ class ResConfigSettings(models.TransientModel):
             'st_dynamic_product_label_print.label_show_on_hand_qty': 'True',
             'st_dynamic_product_label_print.label_show_attributes': 'True',
             'st_dynamic_product_label_print.label_font_size': '10',
+            'st_dynamic_product_label_print.label_product_name_font_size': '12',
+            'st_dynamic_product_label_print.label_product_attribute_font_size': '10',
+            'st_dynamic_product_label_print.label_barcode_height': '35',
             'st_dynamic_product_label_print.label_margin_top': '12.7',
             'st_dynamic_product_label_print.label_margin_bottom': '12.7',
             'st_dynamic_product_label_print.label_margin_left': '5',
@@ -114,6 +120,9 @@ class ResConfigSettings(models.TransientModel):
         ICP.set_param('st_dynamic_product_label_print.label_show_on_hand_qty', self.label_show_on_hand_qty)
         ICP.set_param('st_dynamic_product_label_print.label_show_stock_label', self.label_show_stock_label)
         ICP.set_param('st_dynamic_product_label_print.label_font_size', self.label_font_size)
+        ICP.set_param('st_dynamic_product_label_print.label_product_name_font_size', self.label_product_name_font_size)
+        ICP.set_param('st_dynamic_product_label_print.label_product_attribute_font_size', self.label_product_attribute_font_size)
+        ICP.set_param('st_dynamic_product_label_print.label_barcode_height', self.label_barcode_height)
         ICP.set_param('st_dynamic_product_label_print.label_margin_top', self.label_margin_top)
         ICP.set_param('st_dynamic_product_label_print.label_margin_bottom', self.label_margin_bottom)
         ICP.set_param('st_dynamic_product_label_print.label_margin_left', self.label_margin_left)
@@ -136,6 +145,9 @@ class ResConfigSettings(models.TransientModel):
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             label_show_stock_label=ICP.get_param('st_dynamic_product_label_print.label_show_stock_label') == 'True',
             label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size')),
+            label_product_name_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_product_name_font_size', 12)),
+            label_product_attribute_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_product_attribute_font_size', 10)),
+            label_barcode_height=int(ICP.get_param('st_dynamic_product_label_print.label_barcode_height', 35)),
             label_margin_top=float(ICP.get_param('st_dynamic_product_label_print.label_margin_top')),
             label_margin_bottom=float(ICP.get_param('st_dynamic_product_label_print.label_margin_bottom')),
             label_margin_left=float(ICP.get_param('st_dynamic_product_label_print.label_margin_left')),

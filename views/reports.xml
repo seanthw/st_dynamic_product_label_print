@@ -26,10 +26,10 @@
                                 
                                 <!-- Top section (pushed to the top) -->
                                 <div>
-                                    <div t-attf-style="font-weight: bold; font-size: {{ label.get('font_size', 8) }}px;">
+                                    <div t-attf-style="font-weight: bold; font-size: {{ product_name_font_size }}px;">
                                         <t t-esc="label['product_name']"/>
                                     </div>
-                                    <div t-if="show_attributes and label['attribute_string']" t-attf-style="font-size: {{ label.get('font_size', 8) * 0.9 }}px;">
+                                    <div t-if="show_attributes and label['attribute_string']" t-attf-style="font-size: {{ product_attribute_font_size }}px;">
                                         <t t-esc="label['attribute_string']"/>
                                     </div>
                                 </div>
@@ -41,7 +41,7 @@
                                     </div>
                                     <t t-if="label['barcode']">
                                         <div style="padding: 2px 0;">
-                                            <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 150, 'img_style': 'width: 100%; height: auto; max-height: 35px; display: block; margin: auto;'}"/>
+                                            <div t-out="label['barcode']" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': barcode_height, 'img_style': 'width: 100%; height: auto; display: block; margin: auto;'}"/>
                                         </div>
                                         <div t-if="show_barcode_digits" t-attf-style="font-size: {{ label.get('font_size', 8) * 0.9 }}px;">
                                             <t t-esc="label['barcode']"/>

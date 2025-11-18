@@ -160,6 +160,9 @@ class ProductLabelWizard(models.TransientModel):
             "margin_left": get_float("st_dynamic_product_label_print.label_margin_left", 5.0),
             "margin_right": get_float("st_dynamic_product_label_print.label_margin_right", 5.0),
             "font_size": get_float("st_dynamic_product_label_print.label_font_size", 10.0),
+            "product_name_font_size": get_int("st_dynamic_product_label_print.label_product_name_font_size", 12),
+            "product_attribute_font_size": get_int("st_dynamic_product_label_print.label_product_attribute_font_size", 10),
+            "barcode_height": get_int("st_dynamic_product_label_print.label_barcode_height", 35),
             "label_width": get_float("st_dynamic_product_label_print.label_width", 66.675),
             "label_height": get_float("st_dynamic_product_label_print.label_height", 25.4),
             "vertical_spacing": get_float("st_dynamic_product_label_print.label_vertical_spacing", 4.0),
@@ -217,7 +220,7 @@ class ProductLabelWizard(models.TransientModel):
             )
             quantity = max(int(quantity), 0)
             attribute_string = ", ".join(
-                f"{attr_value.attribute_line_id.attribute_id.name}: {attr_value.name}"
+                f"{attr_value.name}"
                 for attr_value in product.product_template_attribute_value_ids
             )
 
