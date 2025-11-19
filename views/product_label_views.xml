@@ -26,6 +26,8 @@
                             <field name="cols" readonly="print_format != 'other'" force_save="1"/>
                             <field name="vertical_spacing"/>
                             <field name="horizontal_spacing"/>
+                            <field name="start_row"/>
+                            <field name="start_column"/>
 
                         </group>
                     </group>

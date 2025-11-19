@@ -33,6 +33,14 @@ class ProductLabelWizard(models.TransientModel):
         default="3x10",
         required=True,
     )
+    start_row = fields.Integer(
+        string="Start Row",
+        default=1,
+    )
+    start_column = fields.Integer(
+        string="Start Column",
+        default=1,
+    )
     rows = fields.Integer(
         string="Rows",
         required=True,
@@ -284,18 +292,50 @@ class ProductLabelWizard(models.TransientModel):
         report = self.env.ref("st_dynamic_product_label_print.action_report_product_labels")
         report.paperformat_id = temp_paperformat.id
 
-        # Prepare a single flat list of all labels. The template will handle all layout logic.
-        all_labels = self._prepare_label_data(
+        # Prepare a list of actual labels
+        actual_labels = self._prepare_label_data(
             config["font_size"],
             0, # Width is now 100% handled by the template
             0, # Height is now 100% handled by the template
             self.cols
         )
 
+        # Calculate initial offset and prepend placeholders
+        initial_offset = (self.start_row - 1) * self.cols + (self.start_column - 1)
+        all_labels_flat = [None] * initial_offset + actual_labels
+
+        # Calculate labels per page for proper grouping into pages/rows
+        labels_per_page = self.rows * self.cols
+        if labels_per_page <= 0: # Avoid division by zero if rows or cols is 0
+            labels_per_page = 1 # Fallback to prevent infinite loop or error
+
+        # Pad the very last row if it's incomplete, to maintain table structure without extra blank pages
+        if all_labels_flat: # Only pad if there are labels/placeholders to process
+            current_last_row_len = len(all_labels_flat) % self.cols
+            if current_last_row_len != 0:
+                padding_needed = self.cols - current_last_row_len
+                all_labels_flat.extend([None] * padding_needed)
+        elif initial_offset > 0: # If no actual labels but initial offset, ensure placeholders exist
+            all_labels_flat = [None] * initial_offset
+
+        # Now, group the flat list into pages and rows
+        pages = []
+        if self.rows > 0 and self.cols > 0: # Ensure valid rows/cols for grouping
+            # Group into rows first
+            all_rows = []
+            for i in range(0, len(all_labels_flat), self.cols):
+                row_slice = all_labels_flat[i:i + self.cols]
+                all_rows.append(row_slice)
+
+            # Then group rows into pages
+            for i in range(0, len(all_rows), self.rows):
+                page_slice = all_rows[i:i + self.rows]
+                pages.append(page_slice)
+
         data = {
-            "labels": all_labels,
-            "rows": self.rows,
-            "cols": self.cols,
+            "pages": pages,
+            "rows": self.rows, # still needed for row height calc in template
+            "cols": self.cols, # still needed for col width calc in template
             "vertical_spacing": self.vertical_spacing,
             "horizontal_spacing": self.horizontal_spacing,
             **config,
@@ -305,6 +345,7 @@ class ProductLabelWizard(models.TransientModel):
             "show_on_hand_qty": self.show_on_hand_qty,
             "show_stock_label": self.show_stock_label,
             "show_attributes": self.show_attributes,
+            "label_height": config['label_height'], # Pass label_height for fixed-height placeholders
         }
 
         report_action = report.report_action(None, data=data)
