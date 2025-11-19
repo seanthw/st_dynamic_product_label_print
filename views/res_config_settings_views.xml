@@ -78,6 +78,10 @@
                                         <label for="label_show_attributes"/>
                                     </div>
                                     <div>
+                                        <field name="label_show_attribute_key" class="o_light_label"/>
+                                        <label for="label_show_attribute_key"/>
+                                    </div>
+                                    <div>
                                         <field name="label_show_barcode" class="o_light_label"/>
                                         <label for="label_show_barcode"/>
                                     </div>

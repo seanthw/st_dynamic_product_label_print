@@ -79,6 +79,14 @@ class ProductLabelWizard(models.TransientModel):
         res['vertical_spacing'] = float(get_param('st_dynamic_product_label_print.label_vertical_spacing', 1.0))
         res['horizontal_spacing'] = float(get_param('st_dynamic_product_label_print.label_horizontal_spacing', 1.0))
 
+        res['show_barcode'] = get_param('st_dynamic_product_label_print.label_show_barcode') == 'True'
+        res['show_barcode_digits'] = get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True'
+        res['show_internal_ref'] = get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True'
+        res['show_on_hand_qty'] = get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True'
+        res['show_stock_label'] = get_param('st_dynamic_product_label_print.label_show_stock_label') == 'True'
+        res['show_attributes'] = get_param('st_dynamic_product_label_print.label_show_attributes') == 'True'
+        res['show_attribute_key'] = get_param('st_dynamic_product_label_print.label_show_attribute_key') == 'True'
+        
         return res
 
     show_barcode = fields.Boolean(
@@ -105,6 +113,10 @@ class ProductLabelWizard(models.TransientModel):
         string="Show Attributes",
         default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_attributes") == "True"
     )
+    show_attribute_key = fields.Boolean(
+        string="Show Attribute Keys",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param("st_dynamic_product_label_print.label_show_attribute_key") == "True"
+    )
 
     def _save_defaults(self):
         """Save the current wizard settings as the new default values."""
@@ -124,6 +136,7 @@ class ProductLabelWizard(models.TransientModel):
             'show_on_hand_qty': 'st_dynamic_product_label_print.label_show_on_hand_qty',
             'show_stock_label': 'st_dynamic_product_label_print.label_show_stock_label',
             'show_attributes': 'st_dynamic_product_label_print.label_show_attributes',
+            'show_attribute_key': 'st_dynamic_product_label_print.label_show_attribute_key',
             'paperformat_id': 'st_dynamic_product_label_print.paperformat_id',
         }
         
@@ -172,6 +185,7 @@ class ProductLabelWizard(models.TransientModel):
             "show_on_hand_qty": get_param("st_dynamic_product_label_print.label_show_on_hand_qty") == "True",
             "show_stock_label": get_param("st_dynamic_product_label_print.label_show_stock_label") == "True",
             "show_attributes": get_param("st_dynamic_product_label_print.label_show_attributes") == "True",
+            "show_attribute_key": get_param("st_dynamic_product_label_print.label_show_attribute_key") == "True",
         }
 
     def _validate_inputs(self):
@@ -219,10 +233,17 @@ class ProductLabelWizard(models.TransientModel):
                 else self.custom_quantity
             )
             quantity = max(int(quantity), 0)
-            attribute_string = ", ".join(
-                f"{attr_value.name}"
-                for attr_value in product.product_template_attribute_value_ids
-            )
+            
+            if self.show_attribute_key:
+                attribute_string = ", ".join(
+                    f"{attr_value.attribute_id.name}: {attr_value.name}"
+                    for attr_value in product.product_template_attribute_value_ids
+                )
+            else:
+                attribute_string = ", ".join(
+                    f"{attr_value.name}"
+                    for attr_value in product.product_template_attribute_value_ids
+                )
 
             dynamic_styles = self._calculate_dynamic_styles(
                 font_size, product.name, attribute_string, self.show_attributes

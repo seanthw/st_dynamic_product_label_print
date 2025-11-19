@@ -55,6 +55,11 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="st_dynamic_product_label_print.label_show_attributes",
         default=True,
     )
+    label_show_attribute_key = fields.Boolean(
+        "Show Attribute Keys",
+        config_parameter="st_dynamic_product_label_print.label_show_attribute_key",
+        default=True,
+    )
     label_font_size = fields.Integer(string='Base Font Size (px)')
     label_product_name_font_size = fields.Integer(string='Product Name Font Size (px)')
     label_product_attribute_font_size = fields.Integer(string='Attribute Font Size (px)')
@@ -97,6 +102,7 @@ class ResConfigSettings(models.TransientModel):
             'st_dynamic_product_label_print.label_show_internal_ref': 'False',
             'st_dynamic_product_label_print.label_show_on_hand_qty': 'True',
             'st_dynamic_product_label_print.label_show_attributes': 'True',
+            'st_dynamic_product_label_print.label_show_attribute_key': 'True',
             'st_dynamic_product_label_print.label_font_size': '10',
             'st_dynamic_product_label_print.label_product_name_font_size': '12',
             'st_dynamic_product_label_print.label_product_attribute_font_size': '10',
@@ -117,8 +123,13 @@ class ResConfigSettings(models.TransientModel):
         super(ResConfigSettings, self).set_values()
         ICP = self.env['ir.config_parameter'].sudo()
 
+        ICP.set_param('st_dynamic_product_label_print.label_show_barcode', self.label_show_barcode)
+        ICP.set_param('st_dynamic_product_label_print.label_show_barcode_digits', self.label_show_barcode_digits)
+        ICP.set_param('st_dynamic_product_label_print.label_show_internal_ref', self.label_show_internal_ref)
         ICP.set_param('st_dynamic_product_label_print.label_show_on_hand_qty', self.label_show_on_hand_qty)
         ICP.set_param('st_dynamic_product_label_print.label_show_stock_label', self.label_show_stock_label)
+        ICP.set_param('st_dynamic_product_label_print.label_show_attributes', self.label_show_attributes)
+        ICP.set_param('st_dynamic_product_label_print.label_show_attribute_key', self.label_show_attribute_key)
         ICP.set_param('st_dynamic_product_label_print.label_font_size', self.label_font_size)
         ICP.set_param('st_dynamic_product_label_print.label_product_name_font_size', self.label_product_name_font_size)
         ICP.set_param('st_dynamic_product_label_print.label_product_attribute_font_size', self.label_product_attribute_font_size)
@@ -141,9 +152,13 @@ class ResConfigSettings(models.TransientModel):
         paperformat_id = int(paperformat_id_param) if paperformat_id_param and paperformat_id_param.isdigit() else False
 
         res.update(
-
+            label_show_barcode=ICP.get_param('st_dynamic_product_label_print.label_show_barcode') == 'True',
+            label_show_barcode_digits=ICP.get_param('st_dynamic_product_label_print.label_show_barcode_digits') == 'True',
+            label_show_internal_ref=ICP.get_param('st_dynamic_product_label_print.label_show_internal_ref') == 'True',
             label_show_on_hand_qty=ICP.get_param('st_dynamic_product_label_print.label_show_on_hand_qty') == 'True',
             label_show_stock_label=ICP.get_param('st_dynamic_product_label_print.label_show_stock_label') == 'True',
+            label_show_attributes=ICP.get_param('st_dynamic_product_label_print.label_show_attributes') == 'True',
+            label_show_attribute_key=ICP.get_param('st_dynamic_product_label_print.label_show_attribute_key') == 'True',
             label_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_font_size')),
             label_product_name_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_product_name_font_size', 12)),
             label_product_attribute_font_size=int(ICP.get_param('st_dynamic_product_label_print.label_product_attribute_font_size', 10)),

@@ -35,6 +35,7 @@
                             <field name="show_on_hand_qty"/>
                             <field name="show_stock_label"/>
                             <field name="show_attributes"/>
+                            <field name="show_attribute_key"/>
                             <field name="show_barcode"/>
                             <field name="show_barcode_digits"/>
                         </group>
