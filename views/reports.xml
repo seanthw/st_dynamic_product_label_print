@@ -4,14 +4,11 @@
         <t t-call="web.html_container">
             <style>
                 .label-page {
-                    width: 215.9mm;
-                    height: 279.4mm;
-                    padding: 12mm 6mm;
+                    width: 100%;
                     margin: 0;
-                    box-sizing: border-box;
+                    padding: 0; /* Margins are handled by @page context */
                     page-break-after: always;
                     break-after: page;
-                    overflow: hidden;
                     background-color: white;
                 }
                 .label-row {
@@ -21,18 +18,18 @@
                     break-inside: avoid;
                 }
                 .label-item {
-                    flex: 0 0 33.333333%;
-                    height: 25.3mm; /* Shaved 0.1mm to guarantee 10 rows fit */
+                    flex: 1;
+                    height: 25.3mm;
                     box-sizing: border-box;
                     overflow: hidden;
                     text-align: center;
-                    padding: 1mm 0;
+                    padding: 1mm;
                 }
             </style>
             <t t-foreach="pages" t-as="page">
                 <div class="label-page">
                     <t t-foreach="page" t-as="row">
-                        <div class="label-row">
+                        <div class="label-row" t-attf-style="column-gap: {{ horizontal_spacing }}mm; margin-bottom: {{ vertical_spacing }}mm;">
                             <t t-foreach="row" t-as="label">
                                 <div class="label-item">
                                     <t t-if="label">
