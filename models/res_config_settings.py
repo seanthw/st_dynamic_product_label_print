@@ -95,7 +95,7 @@ class ResConfigSettings(models.TransientModel):
             'st_dynamic_product_label_print.cols': '3',
             'st_dynamic_product_label_print.label_width': '66.675',
             'st_dynamic_product_label_print.label_height': '25.4',
-            'vertical_spacing': '4.0',
+            'st_dynamic_product_label_print.label_vertical_spacing': '0.0',
             'st_dynamic_product_label_print.label_horizontal_spacing': '3.0',
             'st_dynamic_product_label_print.label_show_barcode': 'True',
             'st_dynamic_product_label_print.label_show_barcode_digits': 'True',
@@ -107,15 +107,15 @@ class ResConfigSettings(models.TransientModel):
             'st_dynamic_product_label_print.label_product_name_font_size': '12',
             'st_dynamic_product_label_print.label_product_attribute_font_size': '10',
             'st_dynamic_product_label_print.label_barcode_height': '35',
-            'st_dynamic_product_label_print.label_margin_top': '12.7',
-            'st_dynamic_product_label_print.label_margin_bottom': '12.7',
-            'st_dynamic_product_label_print.label_margin_left': '5',
-            'st_dynamic_product_label_print.label_margin_right': '5',
+            'st_dynamic_product_label_print.label_margin_top': '12.0',
+            'st_dynamic_product_label_print.label_margin_bottom': '12.0',
+            'st_dynamic_product_label_print.label_margin_left': '6.0',
+            'st_dynamic_product_label_print.label_margin_right': '6.0',
         }
         
         for key, value in default_params.items():
-            if not ICP.get_param(key):
-                ICP.set_param(key, value)
+            # Always update/set the parameter to ensure compliance with the requirement
+            ICP.set_param(key, value)
 
 
 
